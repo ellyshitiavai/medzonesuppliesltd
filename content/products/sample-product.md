@@ -1,6 +1,7 @@
-md
 ---
-title: "Sample Product"
-description: "This is a sample product description."
-price: 1000
+title: "Surgical Gloves"
+category: "Gloves"
+price: "500"
+image: "/assets/images/uploads/gloves.jpg"
+description: "High-quality sterile surgical gloves."
 ---
