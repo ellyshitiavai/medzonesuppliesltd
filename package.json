@@ -1,0 +1,21 @@
+{
+  "name": "medzonesupply",
+  "version": "1.0.0",
+  "description": "Medzone Supplies website",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "build": "echo \"No build step defined\""
+  },
+  "keywords": [
+    "medical",
+    "supplies",
+    "Kenya",
+    "medzone"
+  ],
+  "author": "Elly",
+  "license": "MIT",
+  "dependencies": {
+    "csso-cli": "^3.0.0"
+  }
+}
