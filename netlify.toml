@@ -1,27 +1,4 @@
-# ----------------------------
-# Netlify build settings
-# ----------------------------
-[build]
-  command = ""
-  publish = "/"
-
-# ----------------------------
-# Redirects for Decap CMS / Identity
-# ----------------------------
 [[redirects]]
-  from = "/admin/*"          # CMS pages
+  from = "/admin"
   to = "/admin/index.html"
   status = 200
-  force = true
-
-[[redirects]]
-  from = "/.netlify/identity/*"   # Identity auth routes
-  to = "/admin/index.html"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/invite/*"         # Invite links
-  to = "/admin/index.html"
-  status = 200
-  force = true
