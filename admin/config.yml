@@ -1,11 +1,9 @@
 backend:
-  name: github
-  repo: ellyshitiavai/medzonesuppliesltd
+  name: git-gateway
   branch: main
-  base_url: https://auth.decapcms.org
 
-media_folder: "assets/images/uploads"
-public_folder: "/assets/images/uploads"
+media_folder: "assets/images/uploads"   # Where uploaded files are stored in repo
+public_folder: "/assets/images/uploads" # Public URL path for the media
 
 collections:
   - name: "products"
@@ -15,7 +13,6 @@ collections:
     slug: "{{slug}}"
     fields:
       - { label: "Title", name: "title", widget: "string" }
-      - { label: "Category", name: "category", widget: "select", options: ["Gloves", "Syringes", "Equipment", "Consumables", "Others"] }
       - { label: "Price", name: "price", widget: "string" }
       - { label: "Image", name: "image", widget: "image" }
       - { label: "Description", name: "description", widget: "text" }
