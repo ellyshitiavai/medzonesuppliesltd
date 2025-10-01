@@ -1,11 +1,10 @@
 backend:
-  name: git-gateway     # or “github” if you prefer direct GitHub auth
-  branch: main          # change this if your default branch is different
-  # If using “github” backend, you might need:
+  name: git-gateway
+  branch: main
   # repo: ellyshitiavai/medzonesuppliesltd
 
-media_folder: "static/uploads"     # where files will be stored in your repo
-public_folder: "/uploads"          # how they’re accessed in browser
+media_folder: "static/uploads"
+public_folder: "/uploads"
 
 media_library:
   name: uploadcare
@@ -32,3 +31,15 @@ collections:
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Date", name: "date", widget: "datetime" }
       - { label: "Body", name: "body", widget: "markdown" }
+
+  - name: "products"
+    label: "Products"
+    folder: "content/products"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Product Name", name: "title", widget: "string" }
+      - { label: "Description", name: "body", widget: "markdown" }
+      - { label: "Price", name: "price", widget: "number" }
+      - { label: "Image", name: "image", widget: "image" }
+      - { label: "Category", name: "category", widget: "string", required: false }
