@@ -10,7 +10,7 @@ public_folder: "/uploads"          # how they’re accessed in browser
 media_library:
   name: uploadcare
   config:
-    publicKey: "your_uploadcare_public_key"
+    publicKey: 2f16b791d59241bdc4ca
 
 collections:
   - name: "pages"
