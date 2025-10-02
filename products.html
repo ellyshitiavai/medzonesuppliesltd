@@ -4,13 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Our Products</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .product { margin-bottom: 30px; border-bottom: 1px solid #ddd; padding-bottom: 20px; }
+    .images img { margin-right: 10px; }
+  </style>
 </head>
 <body>
   <h1>Our Products</h1>
   <div id="products-container">Loading products...</div>
 
+  <!-- Dependencies -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/front-matter@4.0.2/dist/front-matter.min.js"></script>
+  <!-- Your custom script -->
   <script src="/js/products.js"></script>
 </body>
 </html>
