@@ -4,7 +4,7 @@
 const githubUser = "ellyshitiavai";
 const repoName = "medzonesuppliesltd";
 const branch = "main";
-const folderPath = "products"; // Folder where CMS saves product .md files
+const folderPath = "content/products"; // ✅ Corrected path
 
 const productContainer = document.getElementById("product-list");
 
