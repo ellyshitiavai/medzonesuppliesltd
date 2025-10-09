@@ -27,6 +27,8 @@ collections:
     folder: "content/blog"
     create: true
     slug: "{{slug}}"
+    format: "frontmatter"
+    extension: "md"
     fields:
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Date", name: "date", widget: "datetime" }
@@ -39,10 +41,10 @@ collections:
     slug: "{{slug}}"
     format: "frontmatter"
     extension: "md"
+    identifier_field: "title"
     fields:
       - { label: "Product Name", name: "title", widget: "string" }
-      - { label: "Description (Short)", name: "description", widget: "string" }
       - { label: "Price", name: "price", widget: "string" }
       - { label: "Image", name: "image", widget: "image" }
-      - { label: "Detailed Description", name: "body", widget: "markdown", required: false }
-      - { label: "Category", name: "category", widget: "string", required: false }
+      - { label: "Short Description", name: "description", widget: "text" }
+      - { label: "Detailed Description", name: "body", widget: "markdown" }
