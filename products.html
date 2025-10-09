@@ -3,25 +3,124 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Our Products</title>
+  <title>Our Products | Medzone Supplies Ltd</title>
+
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    .product-card { margin-bottom: 30px; border-bottom: 1px solid #ddd; padding-bottom: 20px; }
-    .product-image { width: 200px; height: auto; display: block; margin-bottom: 10px; }
-    .price { color: green; font-weight: bold; }
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f8f9fa;
+      color: #333;
+    }
+
+    header {
+      background: #007b5e;
+      color: white;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    #products-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .product-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .product-card h3 {
+      margin: 0.5rem 0;
+      font-size: 1.2rem;
+      color: #007b5e;
+    }
+
+    .product-card p {
+      font-size: 0.95rem;
+      color: #555;
+      flex-grow: 1;
+    }
+
+    .price {
+      display: inline-block;
+      background: #28a745;
+      color: white;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-weight: bold;
+      margin-top: 1rem;
+    }
+
+    footer {
+      background: #007b5e;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 2rem;
+    }
+
+    footer p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
+
 <body>
-  <h1>Our Products</h1>
+  <header>
+    <h1>Our Products</h1>
+    <p>Explore our range of high-quality medical supplies</p>
+  </header>
 
-  <!-- Container where JS will inject product cards -->
-  <div id="product-list">Loading products...</div>
+  <main>
+    <!-- ✅ Product list injected by JS -->
+    <div id="products-container">Loading products...</div>
+  </main>
 
-  <!-- ✅ JS dependencies (optional for markdown parsing, safe to keep) -->
+  <footer>
+    <p>© 2025 Medzone Supplies Ltd — All rights reserved.</p>
+  </footer>
+
+  <!-- ✅ JS dependencies (optional but safe to keep) -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/front-matter@4.0.2/dist/front-matter.min.js"></script>
 
-  <!-- ✅ Your custom script — FIXED path -->
+  <!-- ✅ Your custom loader -->
   <script src="js/products.js"></script>
 </body>
 </html>
