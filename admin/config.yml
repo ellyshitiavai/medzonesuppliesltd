@@ -5,35 +5,18 @@ backend:
 media_folder: "static/uploads"
 public_folder: "/uploads"
 
-media_library:
-  name: uploadcare
-  config:
-    publicKey: 2f16b791d59241bdc4ca
-
 collections:
   - name: "pages"
     label: "Pages"
     files:
-      - file: "content/_index.md"
+      - file: "content/home.md"
         label: "Home Page"
         name: "home"
         fields:
           - { label: "Title", name: "title", widget: "string" }
           - { label: "Body", name: "body", widget: "markdown" }
 
-  - name: "blog"
-    label: "Blog"
-    folder: "content/blog"
-    create: true
-    slug: "{{slug}}"
-    format: "frontmatter"
-    extension: "md"
-    fields:
-      - { label: "Title", name: "title", widget: "string" }
-      - { label: "Date", name: "date", widget: "datetime" }
-      - { label: "Body", name: "body", widget: "markdown" }
-
-  - name: "products"
+  - name: "shop"
     label: "Products"
     folder: "content/products"
     create: true
@@ -44,8 +27,10 @@ collections:
     editor:
       preview: false
     fields:
-      - { label: "Product Name", name: "title", widget: "string" }
+      - { label: "Title", name: "title", widget: "string" }
       - { label: "Price", name: "price", widget: "string" }
       - { label: "Image", name: "image", widget: "image" }
       - { label: "Short Description", name: "description", widget: "text" }
-      - { label: "Full Description", name: "body", widget: "markdown" }
+      - { label: "Body", name: "body", widget: "markdown" }
+
+publish_mode: editorial_workflow
