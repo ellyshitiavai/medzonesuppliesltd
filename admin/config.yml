@@ -1,7 +1,6 @@
 backend:
   name: git-gateway
   branch: main
-  # repo: ellyshitiavai/medzonesuppliesltd
 
 media_folder: "static/uploads"
 public_folder: "/uploads"
@@ -39,12 +38,14 @@ collections:
     folder: "content/products"
     create: true
     slug: "{{slug}}"
-    format: "frontmatter"
     extension: "md"
+    format: "frontmatter"
     identifier_field: "title"
+    editor:
+      preview: false
     fields:
       - { label: "Product Name", name: "title", widget: "string" }
       - { label: "Price", name: "price", widget: "string" }
       - { label: "Image", name: "image", widget: "image" }
       - { label: "Short Description", name: "description", widget: "text" }
-      - { label: "Detailed Description", name: "body", widget: "markdown" }
+      - { label: "Full Description", name: "body", widget: "markdown" }
