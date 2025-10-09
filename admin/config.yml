@@ -1,10 +1,11 @@
 backend:
   name: git-gateway
   branch: main
+  # Uncomment the line below if you ever switch to GitHub backend instead of Netlify Identity
   # repo: ellyshitiavai/medzonesuppliesltd
 
-media_folder: "static/uploads"
-public_folder: "/uploads"
+media_folder: "static/uploads"    # where files are stored in the repo
+public_folder: "/uploads"         # public URL path for uploaded media
 
 media_library:
   name: uploadcare
@@ -12,6 +13,7 @@ media_library:
     publicKey: 2f16b791d59241bdc4ca
 
 collections:
+  # 🏠 Pages
   - name: "pages"
     label: "Pages"
     files:
@@ -22,6 +24,7 @@ collections:
           - { label: "Title", name: "title", widget: "string" }
           - { label: "Body", name: "body", widget: "markdown" }
 
+  # 📰 Blog
   - name: "blog"
     label: "Blog"
     folder: "content/blog"
@@ -32,6 +35,7 @@ collections:
       - { label: "Date", name: "date", widget: "datetime" }
       - { label: "Body", name: "body", widget: "markdown" }
 
+  # 🛒 Products
   - name: "products"
     label: "Products"
     folder: "content/products"
@@ -39,7 +43,7 @@ collections:
     slug: "{{slug}}"
     fields:
       - { label: "Product Name", name: "title", widget: "string" }
-      - { label: "Description", name: "body", widget: "markdown" }
+      - { label: "Description", name: "description", widget: "text" }
       - { label: "Price", name: "price", widget: "number" }
       - { label: "Image", name: "image", widget: "image" }
       - { label: "Category", name: "category", widget: "string", required: false }
