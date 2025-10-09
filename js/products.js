@@ -1,78 +1,71 @@
-// GitHub repo details
-const repoOwner = "ellyshitiavai";
+// products.js
+
+// ✅ Configuration for your GitHub repo
+const githubUser = "ellyshitiavai";
 const repoName = "medzonesuppliesltd";
-const folderPath = "content/products"; // where .md files are stored
+const branch = "main";
+const folderPath = "products"; // Folder where CMS saves product .md files
 
-const container = document.getElementById("products");
+const productContainer = document.getElementById("product-list");
 
-// 🌀 Show loading message
-container.innerHTML = `
-  <div class="loading">
-    <div class="spinner"></div>
-    <p>Loading products...</p>
-  </div>
-`;
-
+// Function to load all product markdown files from GitHub
 async function loadProducts() {
   try {
-    // Fetch file list from GitHub
-    const res = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderPath}`);
-    if (!res.ok) throw new Error("Failed to load product list");
-    
-    const files = await res.json();
-    const products = [];
+    const apiUrl = `https://api.github.com/repos/${githubUser}/${repoName}/contents/${folderPath}?ref=${branch}`;
+    const response = await fetch(apiUrl);
+    const files = await response.json();
 
-    for (const file of files) {
-      if (file.name.endsWith(".md")) {
-        const raw = await fetch(file.download_url);
-        const text = await raw.text();
+    const mdFiles = files.filter(file => file.name.endsWith(".md"));
 
-        // Extract YAML frontmatter
-        const match = text.match(/---([\s\S]*?)---/);
-        if (!match) continue;
-
-        const yaml = match[1].trim().split("\n");
-        const data = {};
-
-        yaml.forEach(line => {
-          const [key, ...rest] = line.split(":");
-          if (key && rest.length) {
-            data[key.trim()] = rest.join(":").trim().replace(/"/g, "");
-          }
-        });
-
-        products.push(data);
-      }
+    for (const file of mdFiles) {
+      const rawUrl = `https://raw.githubusercontent.com/${githubUser}/${repoName}/${branch}/${folderPath}/${file.name}`;
+      const content = await fetch(rawUrl).then(res => res.text());
+      const product = parseMarkdown(content);
+      renderProduct(product);
     }
-
-    // If no products found
-    if (products.length === 0) {
-      container.innerHTML = `
-        <div class="no-products">
-          <p>No products found yet. Check back soon!</p>
-        </div>
-      `;
-      return;
-    }
-
-    // 🧱 Display products
-    container.innerHTML = products.map(p => `
-      <div class="product">
-        <img src="${p.image || '/assets/images/placeholder.png'}" alt="${p.title || 'Product'}" class="product-img">
-        <h3>${p.title || 'Unnamed Product'}</h3>
-        <p>${p.description || ''}</p>
-        <span class="price">${p.price || ''}</span>
-      </div>
-    `).join('');
-
   } catch (err) {
     console.error("Error loading products:", err);
-    container.innerHTML = `
-      <div class="error">
-        <p>⚠️ Failed to load products. Please refresh or try again later.</p>
-      </div>
-    `;
+    productContainer.innerHTML = `<p class="error">Unable to load products. Check console for details.</p>`;
   }
 }
 
-loadProducts();
+// Parse Markdown frontmatter (YAML block at the top of .md files)
+function parseMarkdown(mdText) {
+  const frontmatterMatch = /^---([\s\S]*?)---/.exec(mdText);
+  const frontmatter = {};
+  let content = mdText;
+
+  if (frontmatterMatch) {
+    const yaml = frontmatterMatch[1].trim();
+    yaml.split("\n").forEach(line => {
+      const [key, ...rest] = line.split(":");
+      frontmatter[key.trim()] = rest.join(":").trim().replace(/^"|"$/g, "");
+    });
+    content = mdText.slice(frontmatterMatch[0].length).trim();
+  }
+
+  return {
+    title: frontmatter.title || "Untitled Product",
+    price: frontmatter.price || "Price on request",
+    image: frontmatter.image || "/uploads/default.png",
+    description: frontmatter.description || content || "",
+  };
+}
+
+// Render product card to the page
+function renderProduct(product) {
+  const card = document.createElement("div");
+  card.className = "product-card";
+
+  card.innerHTML = `
+    <img src="${product.image}" alt="${product.title}" class="product-image" />
+    <h3>${product.title}</h3>
+    <p>${product.description}</p>
+    <span class="price">${product.price}</span>
+  `;
+
+  productContainer.appendChild(card);
+}
+
+// Start loading products when page loads
+document.addEventListener("DOMContentLoaded", loadProducts);
