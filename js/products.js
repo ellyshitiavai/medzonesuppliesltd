@@ -7,7 +7,8 @@ const branch = "main";
 const folderPath = "content/products"; // folder containing .md product files
 
 // ✅ Match the <div id="products-container"> in your products.html
-const productContainer = document.getElementById("products-container");
+const productContainer = document.getElementById("product-list");
+
 
 // Main function to load product markdown files from GitHub
 async function loadProducts() {
