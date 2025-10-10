@@ -11,7 +11,6 @@ container.style.display = "none";
 
 async function loadProducts() {
   try {
-    // Fetch list of files in products folder
     const res = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderPath}`);
     if (!res.ok) throw new Error("Failed to fetch product list from GitHub");
 
@@ -24,8 +23,6 @@ async function loadProducts() {
         if (!rawRes.ok) continue;
 
         const text = await rawRes.text();
-
-        // Extract YAML frontmatter
         const match = text.match(/---([\s\S]*?)---/);
         if (!match) continue;
 
@@ -48,15 +45,24 @@ async function loadProducts() {
     }
 
     container.style.display = "grid";
-    container.innerHTML = products.map(p => `
-      <div class="product-card">
+    container.innerHTML = products.map(p => {
+      const productId = encodeURIComponent(p.title || 'product');
+      const productLink = `${window.location.href}#${productId}`;
+      const waMessage = `Hi, I'm interested in your MEDZONE SUPPLIES AD: ${productLink} (${p.title || ''} - ${p.price || ''})`;
+      const waLink = `https://wa.me/254768675020?text=${encodeURIComponent(waMessage)}`;
+
+      return `
+      <div class="product-card" id="${productId}">
         <img src="${p.image || 'placeholder.png'}" alt="${p.title || 'Product'}" class="product-img">
         <h4>${p.title || 'Unnamed Product'}</h4>
         <p>${p.description || ''}</p>
         <span class="price">${p.price || ''}</span>
-        <a href="#" class="btn">View Product</a>
-      </div>
-    `).join('');
+        <div style="margin-top:10px; display:flex; justify-content:center; gap:10px;">
+          <a href="${waLink}" target="_blank" class="btn">📱 WhatsApp</a>
+          <a href="tel:+254768675020" class="btn">📞 Call</a>
+        </div>
+      </div>`;
+    }).join('');
 
   } catch (err) {
     console.error("Error loading products:", err);
@@ -65,5 +71,5 @@ async function loadProducts() {
   }
 }
 
-// Load products on page ready
 loadProducts();
+  
