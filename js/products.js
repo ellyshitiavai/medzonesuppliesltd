@@ -1,97 +1,151 @@
-// GitHub repo info
-const repoOwner = "ellyshitiavai";
-const repoName = "medzonesuppliesltd";
-const folderPath = "content/products";
+const productList = document.getElementById("product-list");
+const searchInput = document.getElementById("searchInput");
 
-const container = document.getElementById("products");
-const loader = document.getElementById("loader");
-const noProducts = document.getElementById("no-products");
+// Add inline styles
+const style = document.createElement("style");
+style.textContent = `
+  #product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    padding: 10px;
+  }
 
-container.style.display = "none";
+  .product-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+    text-align: center;
+    padding: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
 
+  .product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+  }
+
+  .product-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+
+  .product-card h3 {
+    margin: 10px 0 5px;
+    font-size: 1.1rem;
+  }
+
+  .product-card p {
+    font-size: 0.9rem;
+    color: #555;
+  }
+
+  .price {
+    display: block;
+    margin-top: 6px;
+    font-weight: bold;
+    color: #198754;
+    font-size: 1rem;
+  }
+
+  .buy-btn {
+    background: #25D366;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 8px;
+    font-weight: 600;
+    transition: background 0.2s;
+  }
+
+  .buy-btn:hover {
+    background: #1ebd5a;
+  }
+
+  #searchInput {
+    width: 95%;
+    max-width: 400px;
+    padding: 10px 12px;
+    margin: 15px auto;
+    display: block;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+`;
+document.head.appendChild(style);
+
+// Load products
 async function loadProducts() {
   try {
-    // Fetch the list of files in products folder
-    const res = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderPath}`);
-    if (!res.ok) throw new Error("Failed to fetch product list from GitHub");
+    const response = await fetch("/products/");
+    const text = await response.text();
 
-    const files = await res.json();
-    if (!files.length) throw new Error("No products found in repo");
+    // Extract .md filenames
+    const files = [...text.matchAll(/href="([^"]+\.md)"/g)].map(m => m[1]);
+    if (!files.length) {
+      productList.innerHTML = "<p>No products found. Add .md files to the /products/ folder.</p>";
+      return;
+    }
 
     const products = [];
 
     for (const file of files) {
-      if (file.name.endsWith(".md")) {
-        try {
-          const rawRes = await fetch(file.download_url);
-          if (!rawRes.ok) continue;
+      const res = await fetch(`/products/${file}`);
+      const content = await res.text();
+      const frontmatter = content.match(/---([\\s\\S]*?)---/);
+      if (!frontmatter) continue;
 
-          const text = await rawRes.text();
+      const fm = frontmatter[1];
+      const get = key => {
+        const regex = new RegExp(`${key}:\\s*"?([^"\\n]+)"?`);
+        const match = fm.match(regex);
+        return match ? match[1].trim() : "";
+      };
 
-          // Extract YAML frontmatter safely
-          const match = text.match(/---([\s\S]*?)---/);
-          const data = {};
-
-          if (match) {
-            const yaml = match[1].trim().split("\n");
-            yaml.forEach(line => {
-              const [key, ...rest] = line.split(":");
-              if (key) data[key.trim()] = rest.join(":").trim().replace(/"/g, "");
-            });
-          }
-
-          // Add product only if it has title
-          if (data.title) products.push(data);
-        } catch (e) {
-          console.warn(`Failed to load product file ${file.name}:`, e);
-        }
-      }
+      products.push({
+        title: get("title"),
+        price: get("price"),
+        image: get("image"),
+        description: get("description"),
+      });
     }
 
-    loader.style.display = "none";
+    displayProducts(products);
 
-    if (!products.length) {
-      noProducts.style.display = "block";
-      return;
-    }
-
-    container.style.display = "grid";
-    container.innerHTML = products.map(p => {
-      const productId = encodeURIComponent(p.title);
-      const productLink = `${window.location.href}#${productId}`;
-      const waMessage = `Hi, I'm interested in your MEDZONE SUPPLIES AD: ${productLink} (${p.title} - ${p.price || ''})`;
-      const waLink = `https://wa.me/254768675020?text=${encodeURIComponent(waMessage)}`;
-
-      return `
-      <div class="product-card" id="${productId}">
-        <img src="${p.image || 'placeholder.png'}" alt="${p.title}" class="product-img">
-        <h4>${p.title}</h4>
-        <p>${p.description || ''}</p>
-        <span class="price">${p.price || ''}</span>
-        <div style="margin-top:10px; display:flex; justify-content:center; gap:10px;">
-          <!-- WhatsApp Icon -->
-          <a href="${waLink}" target="_blank" style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background:#25D366; color:#fff; text-decoration:none; font-size:20px;">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-              <path d="M12.004 2C6.476 2 2 6.477 2 12.006c0 2.112.547 4.089 1.506 5.796L2 22l4.296-1.502A9.966 9.966 0 0 0 12.004 22C17.532 22 22 17.523 22 12.006 22 6.477 17.532 2 12.004 2zm5.688 14.762c-.241.68-1.414 1.312-1.966 1.394-.518.08-1.16.116-3.056-1.037-2.271-1.348-3.708-3.447-3.825-3.594-.116-.148-1.016-1.228-1.016-2.348s.604-1.74.82-1.976c.213-.236.469-.295.628-.295.16 0 .316.002.454.003.148.002.346-.056.542.423.197.478.666 1.647.724 1.767.06.12.1.26.002.418-.096.158-.145.253-.29.395-.148.145-.314.322-.449.43-.148.122-.3.256-.127.505.173.25.767 1.271 1.642 2.053 1.13.978 2.077 1.299 2.388 1.448.311.148.492.123.672-.075.18-.197.773-.905.977-1.217.203-.312.407-.26.68-.156.274.103 1.731.817 2.03.965.3.148.5.222.57.345.07.122.07.708-.172 1.387z"/>
-            </svg>
-          </a>
-
-          <!-- Call Icon -->
-          <a href="tel:+254768675020" style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background:#0c4a6e; color:#fff; text-decoration:none; font-size:20px;">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-              <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.27c1.21.49 2.53.76 3.88.76a1 1 0 011 1v3.5a1 1 0 01-1 1C10.07 21.5 2.5 13.93 2.5 4a1 1 0 011-1H7a1 1 0 011 1c0 1.35.26 2.67.76 3.88a1 1 0 01-.27 1.11l-2.87 2.8z"/>
-            </svg>
-          </a>
-        </div>
-      </div>`;
-    }).join('');
+    // Search filter
+    searchInput.addEventListener("input", e => {
+      const q = e.target.value.toLowerCase();
+      const filtered = products.filter(p =>
+        p.title.toLowerCase().includes(q) || p.description.toLowerCase().includes(q)
+      );
+      displayProducts(filtered);
+    });
 
   } catch (err) {
     console.error("Error loading products:", err);
-    loader.style.display = "none";
-    noProducts.style.display = "block";
+    productList.innerHTML = "<p>⚠️ Failed to load products. Please check your /products/ folder path.</p>";
   }
 }
 
+function displayProducts(products) {
+  productList.innerHTML = products.map(p => `
+    <div class="product-card">
+      <img src="${p.image}" alt="${p.title}" class="product-img">
+      <h3>${p.title}</h3>
+      <p>${p.description}</p>
+      <span class="price">Ksh ${p.price}</span>
+      <a href="https://wa.me/254768675020?text=Hello%20Medzone%2C%20I'm%20interested%20in%20${encodeURIComponent(p.title)}" target="_blank" class="buy-btn">
+        💬 Buy Now
+      </a>
+    </div>
+  `).join("");
+}
+
+// Start
 loadProducts();
-                                       
+                   
