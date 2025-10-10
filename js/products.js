@@ -1,26 +1,26 @@
-// Sample products array
-// Replace with your real products fetched from .md files or API
-const products = [
-  {
-    name: "Hospital Bed",
-    price: 15000,
-    image: "hospital-bed.jpg",
-  },
-  {
-    name: "Wheelchair",
-    price: 12000,
-    image: "wheelchair.jpg",
-  },
-  {
-    name: "Oxygen Concentrator",
-    price: 45000,
-    image: "oxygen-concentrator.jpg",
-  },
-];
-
-// DOM elements
 const productList = document.getElementById("product-list");
 const searchInput = document.getElementById("searchInput");
+
+// Fetch products dynamically from CMS JSON
+async function loadProducts() {
+  try {
+    // Update this URL to your JSON endpoint
+    const response = await fetch('/products.json'); 
+    const data = await response.json();
+
+    // Map CMS data to required format
+    const products = data.map(item => ({
+      name: item.name,
+      price: item.price,
+      image: item.image || 'placeholder.jpg', // fallback image
+    }));
+
+    renderProducts(products);
+  } catch (error) {
+    console.error('Failed to load products:', error);
+    productList.innerHTML = '<p style="text-align:center;">Failed to load products.</p>';
+  }
+}
 
 // Function to render products
 function renderProducts(list) {
@@ -53,14 +53,24 @@ function renderProducts(list) {
   });
 }
 
-// Initial render
-renderProducts(products);
-
 // Search functionality
 searchInput.addEventListener("input", (e) => {
   const query = e.target.value.toLowerCase();
-  const filtered = products.filter((p) =>
+  const filtered = currentProducts.filter((p) =>
     p.name.toLowerCase().includes(query)
   );
   renderProducts(filtered);
+});
+
+// Keep current loaded products for search filtering
+let currentProducts = [];
+
+// Initialize
+loadProducts().then(() => {
+  // Store loaded products for search
+  currentProducts = Array.from(productList.children).map(card => ({
+    name: card.querySelector('h4').textContent,
+    price: parseInt(card.querySelector('.price').textContent.replace(/\D/g,'')),
+    image: card.querySelector('img').src
+  }));
 });
