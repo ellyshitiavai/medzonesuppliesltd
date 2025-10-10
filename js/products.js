@@ -1,11 +1,14 @@
 const productList = document.getElementById("product-list");
 const searchInput = document.getElementById("searchInput");
 
+// Initialize an empty array to hold the current list of products
+let currentProducts = [];
+
 // Fetch products dynamically from CMS JSON
 async function loadProducts() {
   try {
-    // Update this URL to your JSON endpoint
-    const response = await fetch('/products.json'); 
+    const response = await fetch('/products.json'); // Ensure this path is correct
+    if (!response.ok) throw new Error("Network response was not ok");
     const data = await response.json();
 
     // Map CMS data to required format
@@ -14,6 +17,9 @@ async function loadProducts() {
       price: item.price,
       image: item.image || 'placeholder.jpg', // fallback image
     }));
+
+    // Store loaded products for search
+    currentProducts = products;
 
     renderProducts(products);
   } catch (error) {
@@ -62,15 +68,5 @@ searchInput.addEventListener("input", (e) => {
   renderProducts(filtered);
 });
 
-// Keep current loaded products for search filtering
-let currentProducts = [];
-
 // Initialize
-loadProducts().then(() => {
-  // Store loaded products for search
-  currentProducts = Array.from(productList.children).map(card => ({
-    name: card.querySelector('h4').textContent,
-    price: parseInt(card.querySelector('.price').textContent.replace(/\D/g,'')),
-    image: card.querySelector('img').src
-  }));
-});
+loadProducts();
