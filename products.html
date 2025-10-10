@@ -14,7 +14,7 @@
       color: #444;
     }
 
-    /* Ensure product grid spacing */
+    /* Product grid spacing */
     #products {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(250px,1fr));
@@ -22,7 +22,7 @@
       padding: 2rem 1rem;
     }
 
-    /* Product card adjustments for buttons */
+    /* Buttons under product card */
     .product-card div {
       display: flex;
       justify-content: center;
@@ -35,11 +35,48 @@
       transform: scale(1.1);
       transition: 0.2s;
     }
+
+    /* Logo styling */
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 1rem;
+    }
+    .logo-thumb {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .brand-title {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--secondary);
+    }
+
+    /* Navigation styling */
+    .main-nav {
+      display: flex;
+      gap: 14px;
+      justify-content: flex-end;
+      padding: 1rem;
+    }
+    .main-nav a {
+      color: var(--secondary);
+      font-weight: 500;
+      text-decoration: none;
+    }
+    .main-nav a:hover {
+      color: var(--primary);
+    }
+
   </style>
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- Header with logo -->
   <header class="container header-inner">
     <div class="brand">
       <img src="logo.png" alt="MEDZONE SUPPLIES" class="logo-thumb">
@@ -52,19 +89,6 @@
       <a href="tel:+254768675020">Call</a>
     </nav>
   </header>
-
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="container hero-inner">
-      <div class="hero-text">
-        <h2>Our Products</h2>
-        <p>High-quality medical supplies for professionals and individuals.</p>
-      </div>
-      <div class="hero-image">
-        <img src="hero.png" alt="MEDZONE SUPPLIES">
-      </div>
-    </div>
-  </section>
 
   <!-- Products Section -->
   <section class="products container">
