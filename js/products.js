@@ -1,10 +1,18 @@
-const productList = document.getElementById("product-list");
-const searchInput = document.getElementById("searchInput");
+// GitHub repo info
+const repoOwner = "ellyshitiavai";
+const repoName = "medzonesuppliesltd";
+const folderPath = "content/products";  // matches your repo
 
-// Add inline styles
+const container = document.getElementById("products");
+const loader = document.getElementById("loader");
+const noProducts = document.getElementById("no-products");
+
+container.style.display = "none";
+
+// Add inline styles for product cards
 const style = document.createElement("style");
 style.textContent = `
-  #product-list {
+  #products {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 16px;
@@ -23,7 +31,7 @@ style.textContent = `
 
   .product-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
   }
 
   .product-img {
@@ -33,7 +41,7 @@ style.textContent = `
     border-radius: 12px;
   }
 
-  .product-card h3 {
+  .product-card h4 {
     margin: 10px 0 5px;
     font-size: 1.1rem;
   }
@@ -66,86 +74,75 @@ style.textContent = `
   .buy-btn:hover {
     background: #1ebd5a;
   }
-
-  #searchInput {
-    width: 95%;
-    max-width: 400px;
-    padding: 10px 12px;
-    margin: 15px auto;
-    display: block;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-  }
 `;
 document.head.appendChild(style);
 
-// Load products
+// Load products from GitHub
 async function loadProducts() {
   try {
-    const response = await fetch("/products/");
-    const text = await response.text();
+    const res = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderPath}`);
+    if (!res.ok) throw new Error("Failed to fetch product list from GitHub");
 
-    // Extract .md filenames
-    const files = [...text.matchAll(/href="([^"]+\.md)"/g)].map(m => m[1]);
-    if (!files.length) {
-      productList.innerHTML = "<p>No products found. Add .md files to the /products/ folder.</p>";
-      return;
-    }
+    const files = await res.json();
+    if (!files.length) throw new Error("No products found in repo");
 
     const products = [];
 
     for (const file of files) {
-      const res = await fetch(`/products/${file}`);
-      const content = await res.text();
-      const frontmatter = content.match(/---([\\s\\S]*?)---/);
-      if (!frontmatter) continue;
+      if (file.name.endsWith(".md")) {
+        try {
+          const rawRes = await fetch(file.download_url);
+          if (!rawRes.ok) continue;
 
-      const fm = frontmatter[1];
-      const get = key => {
-        const regex = new RegExp(`${key}:\\s*"?([^"\\n]+)"?`);
-        const match = fm.match(regex);
-        return match ? match[1].trim() : "";
-      };
+          const text = await rawRes.text();
+          const match = text.match(/---([\s\S]*?)---/);
+          const data = {};
 
-      products.push({
-        title: get("title"),
-        price: get("price"),
-        image: get("image"),
-        description: get("description"),
-      });
+          if (match) {
+            const yaml = match[1].trim().split("\n");
+            yaml.forEach(line => {
+              const [key, ...rest] = line.split(":");
+              if (key) data[key.trim()] = rest.join(":").trim().replace(/"/g, "");
+            });
+          }
+
+          if (data.title) products.push(data);
+
+        } catch (e) {
+          console.warn(`Failed to load product file ${file.name}:`, e);
+        }
+      }
     }
 
-    displayProducts(products);
+    loader.style.display = "none";
 
-    // Search filter
-    searchInput.addEventListener("input", e => {
-      const q = e.target.value.toLowerCase();
-      const filtered = products.filter(p =>
-        p.title.toLowerCase().includes(q) || p.description.toLowerCase().includes(q)
-      );
-      displayProducts(filtered);
-    });
+    if (!products.length) {
+      noProducts.style.display = "block";
+      return;
+    }
+
+    container.style.display = "grid";
+    container.innerHTML = products.map(p => {
+      const productId = encodeURIComponent(p.title);
+      const waMessage = `Hi, I'm interested in your MEDZONE SUPPLIES AD: ${p.title} (${p.price || ''})`;
+      const waLink = `https://wa.me/254768675020?text=${encodeURIComponent(waMessage)}`;
+
+      return `
+        <div class="product-card" id="${productId}">
+          <img src="${p.image || 'placeholder.png'}" alt="${p.title}" class="product-img">
+          <h4>${p.title}</h4>
+          <p>${p.description || ''}</p>
+          <span class="price">${p.price || ''}</span>
+          <a href="${waLink}" target="_blank" class="buy-btn">💬 WhatsApp</a>
+        </div>`;
+    }).join('');
 
   } catch (err) {
     console.error("Error loading products:", err);
-    productList.innerHTML = "<p>⚠️ Failed to load products. Please check your /products/ folder path.</p>";
+    loader.style.display = "none";
+    noProducts.style.display = "block";
   }
 }
 
-function displayProducts(products) {
-  productList.innerHTML = products.map(p => `
-    <div class="product-card">
-      <img src="${p.image}" alt="${p.title}" class="product-img">
-      <h3>${p.title}</h3>
-      <p>${p.description}</p>
-      <span class="price">Ksh ${p.price}</span>
-      <a href="https://wa.me/254768675020?text=Hello%20Medzone%2C%20I'm%20interested%20in%20${encodeURIComponent(p.title)}" target="_blank" class="buy-btn">
-        💬 Buy Now
-      </a>
-    </div>
-  `).join("");
-}
-
-// Start
+// Initialize
 loadProducts();
-                   
