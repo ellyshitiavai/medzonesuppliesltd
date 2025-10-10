@@ -3,109 +3,148 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MEDZONE SUPPLIES — Quality Medical Supplies in Kenya</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Medzone Supplies — Quality Medical Supplies in Kenya</title>
+  <link rel="stylesheet" href="style.css"
+  <meta name="description" content="Medzone Supplies — Quality medical products at affordable prices. Shop hospital beds, wheelchairs, oxygen concentrators, and more. Nairobi delivery.">
+  <meta name="keywords" content="Medzone Supplies, medical supplies Kenya, medical equipment Nairobi, oxygen concentrator, hospital beds, wheelchairs">
+  <meta name="author" content="Medzone Supplies">
+  <!-- Google Search Console verification: replace CONTENT with your token -->
+  <meta name="google-site-verification" content="REPLACE_WITH_GSC_TOKEN" />
+  <!-- Open Graph -->
+  <meta property="og:title" content="Medzone Supplies — Quality Medical Supplies" />
+  <meta property="og:description" content="Quality medical products at affordable prices. Nairobi, Kenya." />
+  <meta property="og:image" content="/assets/images/hero.jpg" />
+  <meta property="og:type" content="website" />
+  <link rel="canonical" href="https://your-netlify-site.netlify.app/" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Store",
+    "name": "Medzone Supplies",
+    "url": "https://your-netlify-site.netlify.app/",
+    "logo": "https://your-netlify-site.netlify.app/assets/images/hero.jpg",
+    "sameAs": [],
+    "contactPoint": [{
+      "@type":"ContactPoint",
+      "telephone":"+254768675020",
+      "contactType":"customer service",
+      "areaServed":"KE"
+    }],
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Nairobi",
+      "addressCountry": "KE"
+    }
+  }
+  </script>
 
-  <!-- Font Awesome CDN for icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Analytics (GA4) - replace MEASUREMENT_ID -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-MEASUREMENT_ID"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-MEASUREMENT_ID');
+  </script>
 </head>
 <body>
-
-  <!-- Header -->
-  <header class="site-header container header-inner">
-    <div class="brand">
-      <img src="logo.jpeg" alt="Medzone logo" class="logo-thumb"/>
-      <div>
-        <h1 class="brand-title">MEDZONE<br/><span>SUPPLIES</span></h1>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <img src="logo.jpeg" alt="Medzone logo" class="logo-thumb"/>
+        <div>
+          <h1 class="brand-title">MEDZONE<br/><span>SUPPLIES</span></h1>
+        </div>
       </div>
-    </div>
+      <nav class="main-nav">
+        <a href="/">Home</a>
+        <a href="#products">Products</a>
+      </nav>
+      <div class="contact">
+       <!-- Font Awesome CDN for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <nav class="main-nav">
-      <a href="/">Home</a>
-      <a href="/products">Products</a>
-    </nav>
-
-    <!-- Contact Box -->
-    <div class="contact-box">
-      <a href="https://wa.me/254768675020" target="_blank" class="icon-btn whatsapp-btn">
-        <i class="fab fa-whatsapp"></i>
-      </a>
-      <a href="tel:+254768675020" class="icon-btn call-btn">
-        <i class="fas fa-phone"></i>
-      </a>
-    </div>
-  </header>
-
-  <!-- Hero Section -->
-  <section class="hero container hero-inner">
-    <div class="hero-text">
-      <h2>Quality Medical<br/>Supplies</h2>
-      <p>Explore our wide range of medical products at affordable prices.</p>
-      <a href="/products" class="btn">Shop Now</a>
-    </div>
-    <div class="hero-image">
-      <img src="chair.webp" alt="Healthcare professional" />
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="site-footer container">
-    <p>&copy; 2025 MEDZONE SUPPLIES — Nairobi, Kenya. All rights reserved.</p>
-  </footer>
-
-  <!-- Inline CSS for Contact Box & Icon Buttons -->
-  <style>
-    /* Reduce body horizontal scroll */
-    body { overflow-x: hidden; }
-
-    /* Contact Box */
-    .contact-box {
+<!-- WhatsApp Button -->
+<a href="https://wa.me/254768675020" target="_blank"
+   style=" {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 55px;
+      height: 55px;
+      z-index: 1000;
+      background-color: #25D366;
+      border-radius: 50%;
+      padding: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
       display: flex;
-      gap: 8px;
-      padding: 5px 8px;       /* smaller padding */
-      background-color: #f4f9f4;
-      border-radius: 8px;     /* slightly less rounded */
-      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-      align-items: center;
-    }
-
-    .icon-btn {
-      display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 45px;           /* smaller size */
-      height: 45px;
-      border-radius: 50%;
-      color: #fff;
-      font-size: 20px;
-      text-decoration: none;
-      transition: transform 0.3s, box-shadow 0.3s;
+      transition: transform 0.3s;
     }
 
-    .icon-btn:hover {
+    .whatsapp-button:hover {
       transform: scale(1.1);
-      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
     }
 
-    .whatsapp-btn,
-    .call-btn {
-      background-color: #25D366;
-    }
-
-    /* Responsive Hero Image */
-    .hero-image img {
-      max-width: 100%;
+    .whatsapp-button img {
+      width: 100%;
       height: auto;
-      border-radius: 10px;
     }
+    
+  <i class="fab fa-whatsapp" style="margin-right: 8px;"></i>WhatsApp
+</a>
 
-    /* Optional: make container responsive */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 15px;
-    }
-  </style>
+<!-- Call Button -->
+<a href="tel:+254768675020"
+   style="display: inline-block; background-color: #007bff; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-size: 16px;">
+  <i class="fas fa-phone" style="margin-right: 8px;"></i>Call
+</a>
+  </header>
 
+  <main>
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="hero-text">
+          <h2>Quality Medical<br/>Supplies</h2>
+          <p>Explore our wide range of medical products at affordable prices.</p>
+          <a href="#products" class="btn">Shop Now</a>
+        </div>
+        <div class="hero-image">
+          <img src="chair.webp" alt="Healthcare professional" />
+        </div>
+      </div>
+    </section>
+
+    <section id="products" class="products container">
+      <h3>Products</h3>
+      <div class="search-filter"><input type="text" id="searchInput" placeholder="Search products..."></div>
+      <div class="product-grid" id="product-list">
+        <!-- Products will be injected by JS (sample items) -->
+      </div>
+    </section>
+
+    <section class="request container">
+      <h3>Request a Quote</h3>
+      <p>Send a quote request via WhatsApp or email.</p>
+      <a href="https://wa.me/254768675020?text=Hi%20I%27d%20like%20a%20quote%20for%20..." class="btn">Request Quote (WhatsApp)</a>
+      <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="contact-form">
+        <input type="hidden" name="form-name" value="contact">
+        <p class="hidden"><label>Don’t fill this out: <input name="bot-field" /></label></p>
+        <label>Name <input type="text" name="name" required></label>
+        <label>Email <input type="email" name="email" required></label>
+        <label>Message <textarea name="message" required></textarea></label>
+        <button type="submit" class="btn">Send</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer container">
+    <p>&copy; Medzone Supplies — Nairobi, Kenya all rights reserved .</p>
+  </footer>
+
+  <script src="main.js"></script>
 </body>
-</html>
+      </html>
