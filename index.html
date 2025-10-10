@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>MEDZONE SUPPLIES — Quality Medical Supplies in Kenya</title>
   <link rel="stylesheet" href="style.css">
-  <meta name="description" content="Medzone Supplies — Quality medical products at affordable prices. Shop hospital beds, wheelchairs, oxygen concentrators, and more. Nairobi delivery.">
 
-  <!-- Font Awesome CDN for Icons -->
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+
   <!-- Header -->
   <header class="site-header container header-inner">
     <div class="brand">
@@ -21,10 +21,9 @@
     </div>
     <nav class="main-nav">
       <a href="/">Home</a>
-      <a href="/products">Products</a>
+      <a href="#products">Products</a>
     </nav>
     <div class="contact">
-      <!-- WhatsApp & Call Icons -->
       <a href="https://wa.me/254768675020" target="_blank" class="btn"><i class="fab fa-whatsapp"></i></a>
       <a href="tel:+254768675020" class="btn"><i class="fas fa-phone"></i></a>
     </div>
@@ -45,27 +44,21 @@
   <!-- Products Section -->
   <section id="products" class="products container">
     <h3>Products</h3>
-    <div class="search-filter">
-      <input type="text" id="searchInput" placeholder="Search products...">
-    </div>
     <div class="product-grid" id="product-list">
       <!-- Products injected dynamically by products.js -->
     </div>
   </section>
 
-  <!-- Footer -->
   <footer class="site-footer container">
     <p>&copy; 2025 MEDZONE SUPPLIES — Nairobi, Kenya. All rights reserved.</p>
   </footer>
 
-  <!-- Main JS -->
   <script src="products.js"></script>
   <script>
     // Smooth scroll for Shop Now button
     document.getElementById('shop-now-btn').addEventListener('click', function(e) {
       e.preventDefault();
-      const productsSection = document.getElementById('products');
-      productsSection.scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
     });
   </script>
 </body>
