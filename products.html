@@ -1,128 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Our Products | Medzone Supplies Ltd</title>
-  <link rel="stylesheet" href="style.css">
-  
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Products | Medzone Supplies Ltd</title>
 
- <style>
-    /*body*/ {
-      font-family: "Segoe UI", Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f8f9fa;
-      color: #333;
-    }
+  <!-- ✅ Main site stylesheet -->
+  <link rel="stylesheet" href="css/style.css" />
 
-   /* header */{
-      background: #007b5e;
-      color: white;
-      text-align: center;
-      padding: 2rem 1rem;
-    }
-
-   /* header h1*/ {
-      margin: 0;
-      font-size: 2rem;
-    }
-
-    /*main*/ {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 0 1rem;
-    }
-
-   /* #products-container*/ {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-    }
-
-   /* .product-card*/ {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+  <style>
+    /* Inline fallback styles (optional, won't override main CSS) */
+    .loader {
       display: flex;
-      flex-direction: column;
+      justify-content: center;
       align-items: center;
+      height: 150px;
+    }
+    .loader span {
+      width: 20px;
+      height: 20px;
+      margin: 5px;
+      background: #0097b2;
+      border-radius: 50%;
+      animation: bounce 0.8s infinite alternate;
+    }
+    .loader span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    .loader span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    @keyframes bounce {
+      to {
+        transform: translateY(-20px);
+      }
+    }
+    #no-products {
       text-align: center;
-      padding: 1rem;
-    }
-
-   /* .product-card*/:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
-    }
-
-   /* .product-image*/ {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-    }
-
-    /*.product-card h3*/ {
-      margin: 0.5rem 0;
-      font-size: 1.2rem;
-      color: #007b5e;
-    }
-
-   /* .product-card p*/ {
-      font-size: 0.95rem;
       color: #555;
-      flex-grow: 1;
+      font-size: 1.1rem;
+      margin-top: 30px;
     }
-
-   /* .price*/ {
-      display: inline-block;
-      background: #28a745;
-      color: white;
-      padding: 0.4rem 0.8rem;
-      border-radius: 20px;
-      font-weight: bold;
-      margin-top: 1rem;
-    }
-
-    /*footer*/ {
-      background: #007b5e;
-      color: white;
-      text-align: center;
-      padding: 1rem;
-      margin-top: 2rem;
-    }
-
-   /* footer p*/ {
-      margin: 0;
-      font-size: 0.9rem;
-    }
-  </style> 
+  </style>
 </head>
 
 <body>
-  <header>
-    <h1>Our Products</h1>
-    <p>Explore our range of high-quality medical supplies</p>
+  <!-- ✅ Header -->
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <img src="logo.png" alt="Medzone Supplies Ltd" />
+      </a>
+      <nav class="nav">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="products.html" class="active">Products</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
   </header>
 
-  <main>
-    <!-- ✅ Product list injected by JS -->
-    <div id="products-container">Loading products...</div>
+  <!-- ✅ Products Section -->
+  <main class="container" style="padding: 50px 0;">
+    <h2 class="section-title">Our Products</h2>
+
+    <!-- Loader -->
+    <div id="loader" class="loader">
+      <span></span><span></span><span></span>
+    </div>
+
+    <!-- Products -->
+    <div id="products" class="product-grid" style="display:none;"></div>
+
+    <!-- No products message -->
+    <div id="no-products" style="display:none;">
+      No products available at the moment.
+    </div>
   </main>
 
-  <footer>
-    <p>© 2025 Medzone Supplies Ltd — All rights reserved.</p>
+  <!-- ✅ Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2025 Medzone Supplies Ltd. All rights reserved.</p>
+    </div>
   </footer>
 
-  <!-- ✅ JS dependencies (optional but safe to keep) -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/front-matter@4.0.2/dist/front-matter.min.js"></script>
-
-  <!-- ✅ Your custom loader -->
+  <!-- ✅ JS -->
   <script src="js/products.js"></script>
+  <script>
+    // Small script for loading + fallback
+    document.addEventListener('DOMContentLoaded', () => {
+      const loader = document.getElementById('loader');
+      const productsContainer = document.getElementById('products');
+      const noProducts = document.getElementById('no-products');
+
+      // Watch for dynamic products
+      const observer = new MutationObserver(() => {
+        loader.style.display = 'none';
+        if (productsContainer.children.length > 0) {
+          productsContainer.style.display = 'grid';
+        } else {
+          noProducts.style.display = 'block';
+        }
+      });
+
+      observer.observe(productsContainer, { childList: true });
+    });
+  </script>
 </body>
 </html>
