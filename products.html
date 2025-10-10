@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="style.css" />
 
   <style>
-    /* Inline fallback styles (optional, won't override main CSS) */
+    /* Loader animation */
     .loader {
       display: flex;
       justify-content: center;
@@ -45,11 +45,11 @@
 </head>
 
 <body>
-  <!-- ✅ Header -->
+  <!-- Header -->
   <header class="header">
     <div class="container">
       <a href="index.html" class="logo">
-        <img src="logo.png" alt="Medzone Supplies Ltd" />
+        <img src="logo.jpeg" alt="Medzone Supplies Ltd" />
       </a>
       <nav class="nav">
         <ul>
@@ -61,7 +61,7 @@
     </div>
   </header>
 
-  <!-- ✅ Products Section -->
+  <!-- Products Section -->
   <main class="container" style="padding: 50px 0;">
     <h2 class="section-title">Our Products</h2>
 
@@ -79,23 +79,22 @@
     </div>
   </main>
 
-  <!-- ✅ Footer -->
+  <!-- Footer -->
   <footer class="footer">
     <div class="container">
       <p>&copy; 2025 Medzone Supplies Ltd. All rights reserved.</p>
     </div>
   </footer>
 
-  <!-- ✅ JS -->
+  <!-- JS -->
   <script src="js/products.js"></script>
   <script>
-    // Small script for loading + fallback
     document.addEventListener('DOMContentLoaded', () => {
       const loader = document.getElementById('loader');
       const productsContainer = document.getElementById('products');
       const noProducts = document.getElementById('no-products');
 
-      // Watch for dynamic products
+      // Watch for dynamically added products
       const observer = new MutationObserver(() => {
         loader.style.display = 'none';
         if (productsContainer.children.length > 0) {
