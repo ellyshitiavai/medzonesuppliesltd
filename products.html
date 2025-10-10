@@ -1,71 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Products | MEDZONE SUPPLIES</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MEDZONE SUPPLIES - Products</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Center loader and no-products messages */
+    #loader, #no-products {
+      text-align: center;
+      margin: 40px 0;
+      font-size: 1.2rem;
+      color: #444;
+    }
 
-  <!-- Main site CSS -->
-  <link rel="stylesheet" href="style.css" />
+    /* Ensure product grid spacing */
+    #products {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px,1fr));
+      gap: 1.5rem;
+      padding: 2rem 1rem;
+    }
+
+    /* Product card adjustments for buttons */
+    .product-card div {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    /* Hover effect for icons */
+    .product-card a:hover {
+      transform: scale(1.1);
+      transition: 0.2s;
+    }
+  </style>
 </head>
-
 <body>
+
   <!-- Header -->
-  <header class="header-inner container">
+  <header class="container header-inner">
     <div class="brand">
-      <img src="logo.jpeg" alt="MEDZONE SUPPLIES" class="logo-thumb" />
+      <img src="logo.png" alt="MEDZONE SUPPLIES" class="logo-thumb">
       <h1 class="brand-title">MEDZONE SUPPLIES</h1>
     </div>
     <nav class="main-nav">
-      <a href="index.html">HOME</a>
-      <a href="products.html" class="active">PRODUCTS</a>
-      <a href="https://wa.me/+254768675020" target="_blank">WHATSAPP</a>
-      <a href="tel:+254768675020">CALL</a>
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="https://wa.me/254768675020" target="_blank">WhatsApp</a>
+      <a href="tel:+254768675020">Call</a>
     </nav>
   </header>
 
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-text">
+        <h2>Our Products</h2>
+        <p>High-quality medical supplies for professionals and individuals.</p>
+      </div>
+      <div class="hero-image">
+        <img src="hero.png" alt="MEDZONE SUPPLIES">
+      </div>
+    </div>
+  </section>
+
   <!-- Products Section -->
-  <main class="products container">
-    <h3>Our Products</h3>
-
-    <!-- Loader -->
-    <div id="loader" class="loading">
-      <div class="spinner"></div>
-    </div>
-
-    <!-- Products Grid -->
-    <div id="products" class="product-grid" style="display:none;"></div>
-
-    <!-- No products fallback -->
-    <div id="no-products" class="no-products" style="display:none;">
-      No products available at the moment.
-    </div>
-  </main>
+  <section class="products container">
+    <h3>Products</h3>
+    <div id="loader" class="spinner"></div>
+    <div id="no-products" class="no-products" style="display:none;">No products available.</div>
+    <div id="products"></div>
+  </section>
 
   <!-- Footer -->
   <footer class="site-footer">
-    &copy; 2025 MEDZONE SUPPLIES. All rights reserved.
+    <p>&copy; 2025 MEDZONE SUPPLIES. All rights reserved.</p>
   </footer>
 
   <!-- JS -->
   <script src="js/products.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const loader = document.getElementById('loader');
-      const productsContainer = document.getElementById('products');
-      const noProducts = document.getElementById('no-products');
-
-      const observer = new MutationObserver(() => {
-        loader.style.display = 'none';
-        if (productsContainer.children.length > 0) {
-          productsContainer.style.display = 'grid';
-        } else {
-          noProducts.style.display = 'block';
-        }
-      });
-
-      observer.observe(productsContainer, { childList: true });
-    });
-  </script>
 </body>
 </html>
