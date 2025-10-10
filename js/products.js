@@ -1,76 +1,69 @@
-const productList = document.getElementById("product-list");
-const searchInput = document.getElementById("searchInput");
+// GitHub repo info
+const repoOwner = "ellyshitiavai";
+const repoName = "medzonesuppliesltd";
+const folderPath = "content/products";
 
-// Fetch products dynamically from CMS JSON
+const container = document.getElementById("products");
+const loader = document.getElementById("loader");
+const noProducts = document.getElementById("no-products");
+
+container.style.display = "none";
+
 async function loadProducts() {
   try {
-    // Update this URL to your JSON endpoint
-    const response = await fetch('/products.json'); 
-    const data = await response.json();
+    // Fetch list of files in products folder
+    const res = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderPath}`);
+    if (!res.ok) throw new Error("Failed to fetch product list from GitHub");
 
-    // Map CMS data to required format
-    const products = data.map(item => ({
-      name: item.name,
-      price: item.price,
-      image: item.image || 'placeholder.jpg', // fallback image
-    }));
+    const files = await res.json();
+    const products = [];
 
-    renderProducts(products);
-  } catch (error) {
-    console.error('Failed to load products:', error);
-    productList.innerHTML = '<p style="text-align:center;">Failed to load products.</p>';
-  }
-}
+    for (const file of files) {
+      if (file.name.endsWith(".md")) {
+        const rawRes = await fetch(file.download_url);
+        if (!rawRes.ok) continue;
 
-// Function to render products
-function renderProducts(list) {
-  productList.innerHTML = "";
+        const text = await rawRes.text();
 
-  if (list.length === 0) {
-    productList.innerHTML = `<p style="text-align:center;">No products found</p>`;
-    return;
-  }
+        // Extract YAML frontmatter
+        const match = text.match(/---([\s\S]*?)---/);
+        if (!match) continue;
 
-  list.forEach((product) => {
-    const productCard = document.createElement("div");
-    productCard.classList.add("product-card");
+        const yaml = match[1].trim().split("\n");
+        const data = {};
+        yaml.forEach(line => {
+          const [key, ...rest] = line.split(":");
+          if (key && rest.length) data[key.trim()] = rest.join(":").trim().replace(/"/g, "");
+        });
 
-    productCard.innerHTML = `
-      <img src="${product.image}" alt="${product.name}" class="product-img" loading="lazy" />
-      <h4>${product.name}</h4>
-      <p class="price">KES ${product.price.toLocaleString()}</p>
-      <div class="product-contact" style="display:flex; gap:10px; justify-content:center; margin-top:8px;">
-        <a href="https://wa.me/254768675020?text=Hi,%20I'm%20interested%20in%20your%20MEDZONE%20SUPPLIES%20AD:%20${encodeURIComponent(product.name)}%20-%20KES%20${product.price}" target="_blank" class="icon-btn whatsapp-btn">
-          <i class="fab fa-whatsapp"></i>
-        </a>
-        <a href="tel:+254768675020" class="icon-btn call-btn">
-          <i class="fas fa-phone"></i>
-        </a>
+        products.push(data);
+      }
+    }
+
+    loader.style.display = "none";
+
+    if (products.length === 0) {
+      noProducts.style.display = "block";
+      return;
+    }
+
+    container.style.display = "grid";
+    container.innerHTML = products.map(p => `
+      <div class="product-card">
+        <img src="${p.image || 'placeholder.png'}" alt="${p.title || 'Product'}" class="product-img">
+        <h4>${p.title || 'Unnamed Product'}</h4>
+        <p>${p.description || ''}</p>
+        <span class="price">${p.price || ''}</span>
+        <a href="#" class="btn">View Product</a>
       </div>
-    `;
+    `).join('');
 
-    productList.appendChild(productCard);
-  });
+  } catch (err) {
+    console.error("Error loading products:", err);
+    loader.style.display = "none";
+    noProducts.style.display = "block";
+  }
 }
 
-// Search functionality
-searchInput.addEventListener("input", (e) => {
-  const query = e.target.value.toLowerCase();
-  const filtered = currentProducts.filter((p) =>
-    p.name.toLowerCase().includes(query)
-  );
-  renderProducts(filtered);
-});
-
-// Keep current loaded products for search filtering
-let currentProducts = [];
-
-// Initialize
-loadProducts().then(() => {
-  // Store loaded products for search
-  currentProducts = Array.from(productList.children).map(card => ({
-    name: card.querySelector('h4').textContent,
-    price: parseInt(card.querySelector('.price').textContent.replace(/\D/g,'')),
-    image: card.querySelector('img').src
-  }));
-});
+// Load products on page ready
+loadProducts();
