@@ -1,72 +1,80 @@
+// assets/js/product.js
+
+// Target the container where products will appear
 const productList = document.getElementById("product-list");
-const searchInput = document.getElementById("searchInput");
 
-// Initialize an empty array to hold the current list of products
-let currentProducts = [];
+// Helper function: Parse frontmatter (--- ... ---) from Markdown
+function parseFrontMatter(mdText) {
+  const frontmatterRegex = /^---\n([\s\S]+?)\n---/;
+  const match = mdText.match(frontmatterRegex);
+  const content = mdText.replace(frontmatterRegex, "").trim();
 
-// Fetch products dynamically from CMS JSON
+  if (!match) return { attributes: {}, body: content };
+
+  const lines = match[1].split("\n");
+  const attributes = {};
+
+  lines.forEach(line => {
+    const [key, ...valueParts] = line.split(":");
+    const value = valueParts.join(":").trim().replace(/^"|"$/g, "");
+    attributes[key.trim()] = value;
+  });
+
+  return { attributes, body: content };
+}
+
+// Fetch all .md files dynamically from the "products" folder
 async function loadProducts() {
   try {
-    const response = await fetch('/products.json'); // Ensure this path is correct
-    if (!response.ok) throw new Error("Network response was not ok");
-    const data = await response.json();
+    const res = await fetch("/products/");
+    const html = await res.text();
 
-    // Map CMS data to required format
-    const products = data.map(item => ({
-      name: item.name,
-      price: item.price,
-      image: item.image || 'placeholder.jpg', // fallback image
-    }));
+    // Find markdown file links
+    const mdFiles = [...html.matchAll(/href="([^"]+\.md)"/g)].map(m => m[1]);
 
-    // Store loaded products for search
-    currentProducts = products;
+    if (mdFiles.length === 0) {
+      productList.innerHTML = "<p>No products found.</p>";
+      return;
+    }
 
-    renderProducts(products);
-  } catch (error) {
-    console.error('Failed to load products:', error);
-    productList.innerHTML = '<p style="text-align:center;">Failed to load products.</p>';
+    // Load and parse each markdown product file
+    const products = await Promise.all(
+      mdFiles.map(async file => {
+        const resp = await fetch(file);
+        const text = await resp.text();
+        const { attributes, body } = parseFrontMatter(text);
+        attributes.description = attributes.description || body.split("\n")[0];
+        return attributes;
+      })
+    );
+
+    displayProducts(products);
+  } catch (err) {
+    console.error("Error loading products:", err);
+    productList.innerHTML = "<p>Failed to load products.</p>";
   }
 }
 
-// Function to render products
-function renderProducts(list) {
+// Display products on the page
+function displayProducts(products) {
   productList.innerHTML = "";
 
-  if (list.length === 0) {
-    productList.innerHTML = `<p style="text-align:center;">No products found</p>`;
-    return;
-  }
+  products.forEach(prod => {
+    const card = document.createElement("div");
+    card.classList.add("product-card");
 
-  list.forEach((product) => {
-    const productCard = document.createElement("div");
-    productCard.classList.add("product-card");
-
-    productCard.innerHTML = `
-      <img src="${product.image}" alt="${product.name}" class="product-img" loading="lazy" />
-      <h4>${product.name}</h4>
-      <p class="price">KES ${product.price.toLocaleString()}</p>
-      <div class="product-contact" style="display:flex; gap:10px; justify-content:center; margin-top:8px;">
-        <a href="https://wa.me/254768675020?text=Hi,%20I'm%20interested%20in%20your%20MEDZONE%20SUPPLIES%20AD:%20${encodeURIComponent(product.name)}%20-%20KES%20${product.price}" target="_blank" class="icon-btn whatsapp-btn">
-          <i class="fab fa-whatsapp"></i>
-        </a>
-        <a href="tel:+254768675020" class="icon-btn call-btn">
-          <i class="fas fa-phone"></i>
-        </a>
-      </div>
+    card.innerHTML = `
+      <img src="${prod.image || '/assets/images/no-image.png'}" alt="${prod.title || 'Product'}">
+      <h3>${prod.title || "Unnamed Product"}</h3>
+      <p class="price">${prod.price || ""}</p>
+      <p class="desc">${prod.description || ""}</p>
+      <a href="https://wa.me/254768675020?text=Hi%20I'm%20interested%20in%20${encodeURIComponent(prod.title || '')}" 
+         class="whatsapp-btn" target="_blank">🟢 WhatsApp Us</a>
     `;
 
-    productList.appendChild(productCard);
+    productList.appendChild(card);
   });
 }
 
-// Search functionality
-searchInput.addEventListener("input", (e) => {
-  const query = e.target.value.toLowerCase();
-  const filtered = currentProducts.filter((p) =>
-    p.name.toLowerCase().includes(query)
-  );
-  renderProducts(filtered);
-});
-
-// Initialize
-loadProducts();
+// Run when the page loads
+document.addEventListener("DOMContentLoaded", loadProducts);
