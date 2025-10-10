@@ -5,53 +5,66 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Products | Medzone Supplies Ltd</title>
 
-  <!-- Main site stylesheet -->
+  <!-- Main site CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
   <!-- Header -->
-  <header class="header">
-    <div class="container">
-      <a href="index.html" class="logo">
-        <img src="logo.jpeg" alt="Medzone Supplies Ltd" class="logo-img" />
-      </a>
-      <nav class="nav">
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="products.html" class="active">Products</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-      </nav>
+  <header class="header-inner container">
+    <div class="brand">
+      <img src="logo.jpeg" alt="Medzone Supplies Ltd" class="logo-thumb" />
+      <h1 class="brand-title">Medzone Supplies Ltd</h1>
     </div>
+    <nav class="main-nav">
+      <a href="index.html">Home</a>
+      <a href="products.html" class="active">Products</a>
+      <a href="#contact">Contact</a>
+    </nav>
   </header>
 
   <!-- Products Section -->
-  <main class="container" style="padding: 50px 0;">
-    <h2 class="section-title">Our Products</h2>
+  <main class="products container">
+    <h3>Our Products</h3>
 
     <!-- Loader -->
-    <div id="loader" class="loader">
-      <span></span><span></span><span></span>
+    <div id="loader" class="loading">
+      <div class="spinner"></div>
     </div>
 
-    <!-- Products -->
+    <!-- Products Grid -->
     <div id="products" class="product-grid" style="display:none;"></div>
 
-    <!-- No products message -->
-    <div id="no-products" style="display:none;">
+    <!-- No products fallback -->
+    <div id="no-products" class="no-products" style="display:none;">
       No products available at the moment.
     </div>
   </main>
 
   <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <p>&copy; 2025 Medzone Supplies Ltd. All rights reserved.</p>
-    </div>
+  <footer class="site-footer">
+    &copy; 2025 Medzone Supplies Ltd. All rights reserved.
   </footer>
 
   <!-- JS -->
   <script src="js/products.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const loader = document.getElementById('loader');
+      const productsContainer = document.getElementById('products');
+      const noProducts = document.getElementById('no-products');
+
+      const observer = new MutationObserver(() => {
+        loader.style.display = 'none';
+        if (productsContainer.children.length > 0) {
+          productsContainer.style.display = 'grid';
+        } else {
+          noProducts.style.display = 'block';
+        }
+      });
+
+      observer.observe(productsContainer, { childList: true });
+    });
+  </script>
 </body>
 </html>
