@@ -11,50 +11,61 @@ container.style.display = "none";
 
 async function loadProducts() {
   try {
+    // Fetch the list of files in products folder
     const res = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderPath}`);
     if (!res.ok) throw new Error("Failed to fetch product list from GitHub");
 
     const files = await res.json();
+    if (!files.length) throw new Error("No products found in repo");
+
     const products = [];
 
     for (const file of files) {
       if (file.name.endsWith(".md")) {
-        const rawRes = await fetch(file.download_url);
-        if (!rawRes.ok) continue;
+        try {
+          const rawRes = await fetch(file.download_url);
+          if (!rawRes.ok) continue;
 
-        const text = await rawRes.text();
-        const match = text.match(/---([\s\S]*?)---/);
-        if (!match) continue;
+          const text = await rawRes.text();
 
-        const yaml = match[1].trim().split("\n");
-        const data = {};
-        yaml.forEach(line => {
-          const [key, ...rest] = line.split(":");
-          if (key && rest.length) data[key.trim()] = rest.join(":").trim().replace(/"/g, "");
-        });
+          // Extract YAML frontmatter safely
+          const match = text.match(/---([\s\S]*?)---/);
+          const data = {};
 
-        products.push(data);
+          if (match) {
+            const yaml = match[1].trim().split("\n");
+            yaml.forEach(line => {
+              const [key, ...rest] = line.split(":");
+              if (key) data[key.trim()] = rest.join(":").trim().replace(/"/g, "");
+            });
+          }
+
+          // Add product only if it has title
+          if (data.title) products.push(data);
+        } catch (e) {
+          console.warn(`Failed to load product file ${file.name}:`, e);
+        }
       }
     }
 
     loader.style.display = "none";
 
-    if (products.length === 0) {
+    if (!products.length) {
       noProducts.style.display = "block";
       return;
     }
 
     container.style.display = "grid";
     container.innerHTML = products.map(p => {
-      const productId = encodeURIComponent(p.title || 'product');
+      const productId = encodeURIComponent(p.title);
       const productLink = `${window.location.href}#${productId}`;
-      const waMessage = `Hi, I'm interested in your MEDZONE SUPPLIES AD: ${productLink} (${p.title || ''} - ${p.price || ''})`;
+      const waMessage = `Hi, I'm interested in your MEDZONE SUPPLIES AD: ${productLink} (${p.title} - ${p.price || ''})`;
       const waLink = `https://wa.me/254768675020?text=${encodeURIComponent(waMessage)}`;
 
       return `
       <div class="product-card" id="${productId}">
-        <img src="${p.image || 'placeholder.png'}" alt="${p.title || 'Product'}" class="product-img">
-        <h4>${p.title || 'Unnamed Product'}</h4>
+        <img src="${p.image || 'placeholder.png'}" alt="${p.title}" class="product-img">
+        <h4>${p.title}</h4>
         <p>${p.description || ''}</p>
         <span class="price">${p.price || ''}</span>
         <div style="margin-top:10px; display:flex; justify-content:center; gap:10px;">
@@ -66,5 +77,21 @@ async function loadProducts() {
           </a>
 
           <!-- Call Icon -->
-          <a href="tel:+254768675020" style="disp
-          
+          <a href="tel:+254768675020" style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background:#0c4a6e; color:#fff; text-decoration:none; font-size:20px;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.27c1.21.49 2.53.76 3.88.76a1 1 0 011 1v3.5a1 1 0 01-1 1C10.07 21.5 2.5 13.93 2.5 4a1 1 0 011-1H7a1 1 0 011 1c0 1.35.26 2.67.76 3.88a1 1 0 01-.27 1.11l-2.87 2.8z"/>
+            </svg>
+          </a>
+        </div>
+      </div>`;
+    }).join('');
+
+  } catch (err) {
+    console.error("Error loading products:", err);
+    loader.style.display = "none";
+    noProducts.style.display = "block";
+  }
+}
+
+loadProducts();
+                                       
