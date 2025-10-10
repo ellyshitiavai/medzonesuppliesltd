@@ -5,43 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Products | Medzone Supplies Ltd</title>
 
-  <!-- ✅ Main site stylesheet -->
+  <!-- Main site stylesheet -->
   <link rel="stylesheet" href="style.css" />
-
-  <style>
-    /* Loader animation */
-    .loader {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 150px;
-    }
-    .loader span {
-      width: 20px;
-      height: 20px;
-      margin: 5px;
-      background: #0097b2;
-      border-radius: 50%;
-      animation: bounce 0.8s infinite alternate;
-    }
-    .loader span:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-    .loader span:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-    @keyframes bounce {
-      to {
-        transform: translateY(-20px);
-      }
-    }
-    #no-products {
-      text-align: center;
-      color: #555;
-      font-size: 1.1rem;
-      margin-top: 30px;
-    }
-  </style>
 </head>
 
 <body>
@@ -49,7 +14,7 @@
   <header class="header">
     <div class="container">
       <a href="index.html" class="logo">
-        <img src="logo.jpeg" alt="Medzone Supplies Ltd" />
+        <img src="logo.jpeg" alt="Medzone Supplies Ltd" class="logo-img" />
       </a>
       <nav class="nav">
         <ul>
@@ -88,24 +53,5 @@
 
   <!-- JS -->
   <script src="js/products.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const loader = document.getElementById('loader');
-      const productsContainer = document.getElementById('products');
-      const noProducts = document.getElementById('no-products');
-
-      // Watch for dynamically added products
-      const observer = new MutationObserver(() => {
-        loader.style.display = 'none';
-        if (productsContainer.children.length > 0) {
-          productsContainer.style.display = 'grid';
-        } else {
-          noProducts.style.display = 'block';
-        }
-      });
-
-      observer.observe(productsContainer, { childList: true });
-    });
-  </script>
 </body>
 </html>
