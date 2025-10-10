@@ -6,20 +6,80 @@
   <title>MEDZONE SUPPLIES - Products</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* Center loader and no-products messages */
+    /* Reset margin to avoid horizontal scroll */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+      color: var(--text);
+      background: #fff;
+      overflow-x: hidden; /* prevent horizontal scroll */
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
+    /* Header */
+    .header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+      flex-wrap: wrap;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-thumb {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .brand-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--secondary);
+    }
+
+    /* Navigation */
+    .main-nav {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .main-nav a {
+      text-decoration: none;
+      color: var(--secondary);
+      font-weight: 500;
+    }
+    .main-nav a:hover {
+      color: var(--primary);
+    }
+
+    /* Products grid */
+    #products {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem 0;
+    }
+
+    /* Loader / no products */
     #loader, #no-products {
       text-align: center;
       margin: 40px 0;
       font-size: 1.2rem;
       color: #444;
-    }
-
-    /* Product grid spacing */
-    #products {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px,1fr));
-      gap: 1.5rem;
-      padding: 2rem 1rem;
     }
 
     /* Buttons under product card */
@@ -36,42 +96,13 @@
       transition: 0.2s;
     }
 
-    /* Logo styling */
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 1rem;
+    /* Footer */
+    .site-footer {
+      text-align: center;
+      padding: 2rem 0;
+      border-top: 1px solid #e0e0e0;
+      color: #666;
     }
-    .logo-thumb {
-      width: 60px;
-      height: 60px;
-      object-fit: cover;
-      border-radius: 50%;
-    }
-    .brand-title {
-      margin: 0;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--secondary);
-    }
-
-    /* Navigation styling */
-    .main-nav {
-      display: flex;
-      gap: 14px;
-      justify-content: flex-end;
-      padding: 1rem;
-    }
-    .main-nav a {
-      color: var(--secondary);
-      font-weight: 500;
-      text-decoration: none;
-    }
-    .main-nav a:hover {
-      color: var(--primary);
-    }
-
   </style>
 </head>
 <body>
