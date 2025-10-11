@@ -1,19 +1,20 @@
+// Elements
 const productList = document.getElementById("product-list");
 const searchInput = document.getElementById("searchInput");
 
-// Show loader immediately
+// Show mobile-friendly loader
 productList.innerHTML = `
-  <div id="loader" style="text-align:center; padding:40px;">
+  <div id="loader" style="text-align:center; padding:20px;">
     <div style="
-      border: 5px solid #f3f3f3;
-      border-top: 5px solid #25D366;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #25D366;
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
+      width: 30px;
+      height: 30px;
       animation: spin 1s linear infinite;
       margin:auto;
     "></div>
-    <p>Loading products...</p>
+    <p style="font-size:14px; color:#555; margin-top:8px;">Loading products...</p>
   </div>
 `;
 
@@ -32,6 +33,7 @@ const repoOwner = "ellyshitiavai";
 const repoName = "medzonesuppliesltd";
 const folderPath = "content/products"; // ✅ Only one content
 
+// Load products from GitHub
 async function loadProducts() {
   try {
     console.log("🔄 Fetching products from GitHub...");
@@ -121,3 +123,4 @@ searchInput?.addEventListener("input", (e) => {
 
 // Start loading products
 loadProducts();
+      
