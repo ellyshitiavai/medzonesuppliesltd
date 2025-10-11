@@ -1,101 +1,123 @@
-<div id="product-list" style="text-align:center; padding:40px;">
-  <div id="loader" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-    <div class="spinner" style="
+const productList = document.getElementById("product-list");
+const searchInput = document.getElementById("searchInput");
+
+// Show loader immediately
+productList.innerHTML = `
+  <div id="loader" style="text-align:center; padding:40px;">
+    <div style="
       border: 5px solid #f3f3f3;
-      border-top: 5px solid #3498db;
+      border-top: 5px solid #25D366;
       border-radius: 50%;
       width: 40px;
       height: 40px;
       animation: spin 1s linear infinite;
+      margin:auto;
     "></div>
-    <p style="margin-top:10px;">Loading products...</p>
+    <p>Loading products...</p>
   </div>
-</div>
+`;
 
-<style>
+// Spinner animation
+const style = document.createElement("style");
+style.innerHTML = `
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
-</style>
+`;
+document.head.appendChild(style);
 
-<script>
-console.log("✅ Script started");
-
-// Select elements
-const productList = document.getElementById("product-list");
-const loader = document.getElementById("loader");
-
-// Show loader
-loader.style.display = "flex";
+// GitHub repo info
+const repoOwner = "ellyshitiavai";
+const repoName = "medzonesuppliesltd";
+const folderPath = "content/products"; // ✅ Only one content
 
 async function loadProducts() {
   try {
-    console.log("🔄 Fetching from GitHub API...");
-    const res = await fetch("https://api.github.com/repos/ellyshitiavai/medzonesuppliesltd/contents/content/products");
-
+    console.log("🔄 Fetching products from GitHub...");
+    const res = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderPath}`);
     console.log("📦 Response status:", res.status);
 
-    if (!res.ok) throw new Error("❌ Failed to fetch product list");
+    if (!res.ok) throw new Error(`Failed to fetch products: ${res.status}`);
 
     const files = await res.json();
     console.log("📁 Files found:", files);
 
-    if (!Array.isArray(files) || files.length === 0) {
-      productList.innerHTML = "<p>No products found in repo folder.</p>";
+    if (!files.length) {
+      productList.innerHTML = "<p>No products found in CMS folder.</p>";
       return;
     }
 
     const products = [];
 
     for (const file of files) {
-      console.log("🧾 Checking file:", file.name);
       if (file.name.endsWith(".md")) {
         const raw = await fetch(file.download_url);
         const text = await raw.text();
+
+        // Extract frontmatter
         const match = text.match(/---([\s\S]*?)---/);
         const data = {};
-
         if (match) {
           match[1].trim().split("\n").forEach(line => {
             const [key, ...rest] = line.split(":");
-            data[key.trim()] = rest.join(":").trim().replace(/"/g, "");
+            if (key) data[key.trim()] = rest.join(":").trim().replace(/"/g, "");
           });
         }
 
-        if (data.title) {
-          console.log("✅ Product parsed:", data.title);
-          products.push(data);
-        }
+        if (data.title) products.push(data);
       }
     }
 
-    loader.style.display = "none";
+    // Remove loader
+    const loader = document.getElementById("loader");
+    if (loader) loader.remove();
 
     if (!products.length) {
-      console.warn("⚠️ No valid product entries found in markdown files");
       productList.innerHTML = "<p>No valid products found.</p>";
       return;
     }
 
-    productList.innerHTML = products.map(p => `
-      <div style="border:1px solid #ccc; padding:10px; margin:10px; border-radius:8px;">
-        <img src="${p.image || 'placeholder.png'}" alt="${p.title}" style="max-width:100%; border-radius:8px;">
-        <h4>${p.title}</h4>
-        <p>${p.description || ''}</p>
-        <strong>${p.price || ''}</strong>
-      </div>
-    `).join('');
+    // Display products
+    productList.innerHTML = products.map(p => {
+      const productLink = `${window.location.href}#${encodeURIComponent(p.title)}`;
+      const waMessage = `Hi, I'm interested in your MEDZONE SUPPLIES AD: ${productLink} (${p.title} - ${p.price || ''})`;
+      const waLink = `https://wa.me/254768675020?text=${encodeURIComponent(waMessage)}`;
 
-    console.log("🎉 Products displayed successfully");
+      return `
+        <div class="product-card" style="border:1px solid #ccc; padding:10px; border-radius:8px; text-align:center;">
+          <img src="${p.image || 'placeholder.png'}" alt="${p.title}" style="max-width:100%; border-radius:8px;">
+          <h4>${p.title}</h4>
+          <p>${p.description || ''}</p>
+          <strong>${p.price || ''}</strong>
+          <div style="margin-top:10px; display:flex; justify-content:center; gap:10px;">
+            <a href="${waLink}" target="_blank" style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background:#25D366; color:#fff; text-decoration:none; font-size:20px;">
+              <i class="fab fa-whatsapp"></i>
+            </a>
+            <a href="tel:+254768675020" style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background:#0c4a6e; color:#fff; text-decoration:none; font-size:20px;">
+              <i class="fas fa-phone"></i>
+            </a>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    console.log("🎉 Products loaded successfully");
 
   } catch (err) {
     console.error("💥 Error loading products:", err);
-    loader.style.display = "none";
     productList.innerHTML = "<p>Failed to load products.</p>";
   }
 }
 
+// Search functionality
+searchInput?.addEventListener("input", (e) => {
+  const query = e.target.value.toLowerCase();
+  document.querySelectorAll(".product-card").forEach(card => {
+    const match = card.textContent.toLowerCase().includes(query);
+    card.style.display = match ? "block" : "none";
+  });
+});
+
+// Start loading products
 loadProducts();
-</script>
-      
