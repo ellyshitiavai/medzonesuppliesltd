@@ -1,4 +1,4 @@
-/*// Elements
+// Elements
 const productList = document.getElementById("product-list");
 const searchInput = document.getElementById("searchInput");
 
@@ -122,9 +122,9 @@ searchInput?.addEventListener("input", (e) => {
 });
 
 // Start loading products
-loadProducts();*/
+loadProducts();
 
-// 🌟 MEDZONE SUPPLIES - Unified Script
+/*// 🌟 MEDZONE SUPPLIES - Unified Script
 alert("Products.js is running!");
 
 // Grab elements if they exist
@@ -343,5 +343,5 @@ searchInput?.addEventListener("input",e=>{
   document.querySelectorAll(".product-card").forEach(card=>{
     card.style.display = card.textContent.toLowerCase().includes(query)?"block":"none";
   });
-});
+});*/
   
