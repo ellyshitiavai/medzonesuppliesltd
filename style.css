@@ -1,90 +1,68 @@
-
-:root{
-  --primary:#1a73e8;
-  --secondary:#0c4a6e;
-  --muted:#f4f9ff;
-  --text:#1a1a1a;
+/* Header Improvements */
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 0; /* increased padding for bigger header */
 }
-body {margin-left: 100px;}
-*{box-sizing:border-box}
-body{font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--text);margin:0;line-height:1.5;background:#fff}
-.container{max-width:1200px;margin:0 auto;padding:1rem}
-.header-inner{display:flex;align-items:center;justify-content:space-between;padding:1rem 0}
-.brand{display:flex;gap:12px;align-items:center}
-.logo-thumb{width:60px;height:60px;object-fit:cover;border-radius:50%}
-.brand-title{margin:0;font-size:1.2rem;font-weight:700;color:var(--secondary)}
-.main-nav a{margin:0 14px;color:var(--secondary);font-weight:500;text-decoration:none;position:relative}
-.main-nav a:hover{color:var(--primary)}
-.contact a{margin-left:14px;color:var(--primary);text-decoration:none;font-weight:500}
-.hero{background:var(--muted);padding:3rem 0;border-bottom:1px solid #60cd74 rgb(235, 247, 240)}
-.hero-inner{display:flex;gap:2rem;align-items:center;justify-content:space-between;flex-wrap:wrap}
-.hero-text{flex:1;min-width:280px}
-.hero-text h2{font-size:3rem;margin:0 0 1rem;color:var(--secondary)}
-.hero-text p{font-size:1.2rem;color:#333}
-.btn{display:inline-block;background:var(--primary);color:#fff;padding:12px 22px;border-radius:6px;text-decoration:none;margin-top:10px;transition:0.2s}
-.btn:hover{background:#1558b0}
-.hero-image img{max-width:400px;width:100%;border-radius:12px}
-.products{padding:3rem 0}
-.products h3{font-size:2rem;color:var(--secondary);margin-bottom:1rem}
-.search-filter{margin-bottom:1.5rem;text-align:center}
-.search-filter input{width:90%;max-width:400px;padding:10px;border:1px solid #ccc;border-radius:6px}
-.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.5rem}
-.product-card{background:white;border-radius:10px;padding:1rem;box-shadow:0 4px 10px rgba(0,0,0,0.06);transition:transform .2s}
-.product-card:hover{transform:translateY(-4px)}
-.product-card img{width:100%;height:180px;object-fit:cover;border-radius:8px}
-.product-card h4{margin:0.5rem 0;color:var(--secondary)}
-.price{font-weight:600;color:var(--primary)}
-.contact-form{display:grid;gap:12px;max-width:600px;margin:2rem auto}
-.contact-form label{display:block;font-weight:500}
-.contact-form input,.contact-form textarea{width:100%;padding:10px;border:1px solid #ccc;border-radius:6px}
-.site-footer{padding:2rem 0;text-align:center;color:#666;border-top:1px solid #e0e0e0}
 
-/* Responsive */
+.brand-title {
+  font-size: 1.5rem; /* bigger brand text */
+}
+
+.logo-thumb {
+  width: 80px; /* larger logo */
+  height: 80px;
+}
+
+.main-nav a {
+  margin: 0 18px; /* more spacing between links */
+  font-size: 1.1rem; /* slightly bigger text */
+}
+
+.contact a {
+  margin-left: 20px;
+  font-size: 1.1rem;
+}
+
+/* Hero Section Improvements */
+.hero {
+  padding: 4rem 0; /* more vertical space */
+}
+
+.hero-text h2 {
+  font-size: 3.5rem; /* larger headline */
+}
+
+.hero-text p {
+  font-size: 1.3rem; /* slightly bigger text */
+}
+
+.btn {
+  padding: 14px 26px; /* bigger button */
+  font-size: 1.1rem;
+}
+
+/* Product Cards */
+.product-card {
+  padding: 1.2rem;
+}
+
+.product-card img {
+  height: 200px; /* slightly taller image */
+}
+
+/* Responsive adjustments */
 @media(max-width:900px){
-  .hero-inner{flex-direction:column;text-align:center}
-  .hero-text h2{font-size:2.2rem}
+  .hero-inner {
+    flex-direction: column;
+    text-align: center;
+  }
+  .hero-text h2 {
+    font-size: 2.6rem;
+  }
+  .logo-thumb {
+    width: 70px;
+    height: 70px;
+  }
 }
-/* === Product Loader & Display Styles === */
-.loading, .error, .no-products {
-  text-align: center;
-  margin-top: 40px;
-  color: #444;
-  font-family: sans-serif;
-}
-
-.spinner {
-  border: 4px solid #eee;
-  border-top: 4px solid #4CAF50;
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  margin: 10px auto;
-  animation: spin 0.9s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.product {
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 15px;
-  margin: 10px;
-  text-align: center;
-  box-shadow: 0 1px 5px rgba(0,0,0,0.1);
-}
-
-.product-img {
-  width: 100%;
-  max-width: 200px;
-  height: auto;
-  border-radius: 8px;
-}
-
-.price {
-  font-weight: bold;
-  color: #2E7D32;
-       }
-  
