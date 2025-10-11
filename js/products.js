@@ -20,31 +20,36 @@
 </style>
 
 <script>
-console.log("✅ products.js inline test running...");
+console.log("✅ Script started");
 
+// Select elements
 const productList = document.getElementById("product-list");
 const loader = document.getElementById("loader");
 
-// Show loader immediately
+// Show loader
 loader.style.display = "flex";
 
 async function loadProducts() {
   try {
-    console.log("🔄 Fetching products...");
-    const res = await fetch("https://api.github.com/repos/ellyshitiavai/medzonesuppliesltd/content/products");
-    if (!res.ok) throw new Error("Failed to fetch product list");
+    console.log("🔄 Fetching from GitHub API...");
+    const res = await fetch("https://api.github.com/repos/ellyshitiavai/medzonesuppliesltd/contents/content/products");
+
+    console.log("📦 Response status:", res.status);
+
+    if (!res.ok) throw new Error("❌ Failed to fetch product list");
 
     const files = await res.json();
-    console.log("✅ Product files:", files);
+    console.log("📁 Files found:", files);
 
     if (!Array.isArray(files) || files.length === 0) {
-      productList.innerHTML = "<p>No products found in repo.</p>";
+      productList.innerHTML = "<p>No products found in repo folder.</p>";
       return;
     }
 
     const products = [];
 
     for (const file of files) {
+      console.log("🧾 Checking file:", file.name);
       if (file.name.endsWith(".md")) {
         const raw = await fetch(file.download_url);
         const text = await raw.text();
@@ -58,5 +63,39 @@ async function loadProducts() {
           });
         }
 
-        if (data.title) products.push(data);
-        
+        if (data.title) {
+          console.log("✅ Product parsed:", data.title);
+          products.push(data);
+        }
+      }
+    }
+
+    loader.style.display = "none";
+
+    if (!products.length) {
+      console.warn("⚠️ No valid product entries found in markdown files");
+      productList.innerHTML = "<p>No valid products found.</p>";
+      return;
+    }
+
+    productList.innerHTML = products.map(p => `
+      <div style="border:1px solid #ccc; padding:10px; margin:10px; border-radius:8px;">
+        <img src="${p.image || 'placeholder.png'}" alt="${p.title}" style="max-width:100%; border-radius:8px;">
+        <h4>${p.title}</h4>
+        <p>${p.description || ''}</p>
+        <strong>${p.price || ''}</strong>
+      </div>
+    `).join('');
+
+    console.log("🎉 Products displayed successfully");
+
+  } catch (err) {
+    console.error("💥 Error loading products:", err);
+    loader.style.display = "none";
+    productList.innerHTML = "<p>Failed to load products.</p>";
+  }
+}
+
+loadProducts();
+</script>
+      
