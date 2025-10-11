@@ -125,6 +125,8 @@ searchInput?.addEventListener("input", (e) => {
 loadProducts();*/
 
 // 🌟 MEDZONE SUPPLIES - All-in-One Products + Hero Slider with Arrows & Dots
+alert("Products.js is running!");
+
 const productList = document.getElementById("product-list");
 const searchInput = document.getElementById("searchInput");
 const heroSlider = document.getElementById("hero-slider");
