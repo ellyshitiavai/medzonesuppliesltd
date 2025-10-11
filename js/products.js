@@ -1,16 +1,52 @@
-// GitHub repo info
+// === GitHub Repo Info ===
 const repoOwner = "ellyshitiavai";
 const repoName = "medzonesuppliesltd";
 const folderPath = "content/products";
 
+// === Page Elements ===
 const container = document.getElementById("products");
 const loader = document.getElementById("loader");
 const noProducts = document.getElementById("no-products");
 
+// Initialize display states
 container.style.display = "none";
+noProducts.style.display = "none";
+loader.style.display = "flex";
+loader.innerHTML = `
+  <div style="
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    gap:10px;
+    padding:40px 0;
+  ">
+    <div class="spinner" style="
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #0c4a6e;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    "></div>
+    <p style="color:#0c4a6e;font-weight:500;">Loading products...</p>
+  </div>
+`;
 
+// Add basic spin animation via JS
+const style = document.createElement('style');
+style.innerHTML = `
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}`;
+document.head.appendChild(style);
+
+// === Load Products Function ===
 async function loadProducts() {
   try {
+    console.log("Fetching product list from GitHub...");
     const res = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderPath}`);
     if (!res.ok) throw new Error("Failed to fetch product list from GitHub");
 
@@ -32,16 +68,9 @@ async function loadProducts() {
         const text = await rawRes.text();
         const data = {};
 
-        // Check for YAML frontmatter block
-        const match = text.match(/---([\\s\\S]*?)---/);
-        let lines = [];
-
-        if (match) {
-          lines = match[1].trim().split("\n");
-        } else {
-          // fallback: use entire file content as key:value pairs
-          lines = text.trim().split("\n");
-        }
+        // Detect YAML frontmatter or fallback plain key:value
+        const match = text.match(/---([\s\S]*?)---/);
+        let lines = match ? match[1].trim().split("\n") : text.trim().split("\n");
 
         lines.forEach(line => {
           const [key, ...rest] = line.split(":");
@@ -64,9 +93,14 @@ async function loadProducts() {
 
     if (!products.length) {
       noProducts.style.display = "block";
+      noProducts.innerHTML = `
+        <p style="color:#666;text-align:center;margin:40px 0;">
+          No products found. Please check your CMS or GitHub folder.
+        </p>`;
       return;
     }
 
+    // === Render Products ===
     container.style.display = "grid";
     container.innerHTML = products.map(p => {
       const productId = encodeURIComponent(p.title);
@@ -75,21 +109,52 @@ async function loadProducts() {
       const waLink = `https://wa.me/254768675020?text=${encodeURIComponent(waMessage)}`;
 
       return `
-      <div class="product-card" id="${productId}">
-        <img src="${p.image || 'placeholder.png'}" alt="${p.title}" class="product-img">
-        <h4>${p.title}</h4>
-        <p>${p.description || ''}</p>
-        <span class="price">${p.price || ''}</span>
+      <div class="product-card" id="${productId}" style="
+        background:#fff;
+        border-radius:12px;
+        box-shadow:0 2px 6px rgba(0,0,0,0.1);
+        padding:15px;
+        text-align:center;
+        transition:transform 0.2s;
+      ">
+        <img src="${p.image || 'placeholder.png'}" alt="${p.title}" class="product-img" style="
+          width:100%;
+          height:180px;
+          object-fit:cover;
+          border-radius:10px;
+        ">
+        <h4 style="margin:10px 0;font-size:18px;color:#0c4a6e;">${p.title}</h4>
+        <p style="font-size:14px;color:#555;">${p.description || ''}</p>
+        <span class="price" style="color:#25D366;font-weight:600;">${p.price || ''}</span>
         <div style="margin-top:10px; display:flex; justify-content:center; gap:10px;">
-          <a href="${waLink}" target="_blank" style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background:#25D366; color:#fff; text-decoration:none; font-size:20px;">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-              <path d="M12.004 2C6.476 2 2 6.477 2 12.006c0 2.112.547 4.089 1.506 5.796L2 22l4.296-1.502A9.966 9.966 0 0 0 12.004 22C17.532 22 22 17.523 22 12.006 22 6.477 17.532 2 12.004 2zm5.688 14.762c-.241.68-1.414 1.312-1.966 1.394-.518.80…"/>
-            </svg>
+          <!-- WhatsApp Icon -->
+          <a href="${waLink}" target="_blank" style="
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            width:40px;
+            height:40px;
+            border-radius:50%;
+            background:#25D366;
+            color:#fff;
+            text-decoration:none;
+            font-size:20px;">
+            <i class="fa-brands fa-whatsapp"></i>
           </a>
-          <a href="tel:+254768675020" style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background:#0c4a6e; color:#fff; text-decoration:none; font-size:20px;">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-              <path d="M6.62 10.79a15.053 15.053 0 006.59 6.…"/>
-            </svg>
+
+          <!-- Call Icon -->
+          <a href="tel:+254768675020" style="
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            width:40px;
+            height:40px;
+            border-radius:50%;
+            background:#0c4a6e;
+            color:#fff;
+            text-decoration:none;
+            font-size:20px;">
+            <i class="fa-solid fa-phone"></i>
           </a>
         </div>
       </div>`;
@@ -99,7 +164,12 @@ async function loadProducts() {
     console.error("Error loading products:", err);
     loader.style.display = "none";
     noProducts.style.display = "block";
+    noProducts.innerHTML = `
+      <p style="color:red;text-align:center;margin:40px 0;">
+        ⚠️ Error loading products. Check console for details.
+      </p>`;
   }
 }
 
+// === Run Loader ===
 loadProducts();
