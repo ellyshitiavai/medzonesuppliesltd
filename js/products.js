@@ -31,7 +31,7 @@ loader.style.display = "flex";
 async function loadProducts() {
   try {
     console.log("🔄 Fetching products...");
-    const res = await fetch("https://api.github.com/repos/ellyshitiavai/medzonesuppliesltd/contents/content/products");
+    const res = await fetch("https://api.github.com/repos/ellyshitiavai/medzonesuppliesltd/content/products");
     if (!res.ok) throw new Error("Failed to fetch product list");
 
     const files = await res.json();
