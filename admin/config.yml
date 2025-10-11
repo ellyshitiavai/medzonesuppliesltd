@@ -1,38 +1,38 @@
-backend:
-  name: git-gateway
-  branch: main
-  publish_mode: simple  
+#backend:
+ # name: git-gateway
+#  branch: main
+  #publish_mode: simple  
 
 
-media_folder: "static/uploads"
-public_folder: "/uploads"
+#media_folder: "static/uploads"
+#public_folder: "/uploads"
 
-collections:
-  - name: "pages"
-    label: "Pages"
-    files:
-      - file: "content/home.md"
-        label: "Home Page"
-        name: "home"
-        fields:
-          - { label: "Title", name: "title", widget: "string" }
-          - { label: "Body", name: "body", widget: "markdown" }
+#collections:
+#  - name: "pages"
+ #   label: "Pages"
+ #   files:
+  #    - file: "content/home.md"
+  #      label: "Home Page"
+   #     name: "home"
+    #    fields:
+   #       - { label: "Title", name: "title", widget: "string" }
+   #       - { label: "Body", name: "body", widget: "markdown" }
 
-  - name: "shop"
-    label: "Products"
-    folder: "content/products"
-    create: true
-    slug: "{{slug}}"
-    extension: "md"
-    format: "frontmatter"
-    identifier_field: "title"
-    editor:
-      preview: false
-    fields:
-      - { label: "Title", name: "title", widget: "string" }
-      - { label: "Price", name: "price", widget: "string" }
-      - { label: "Image", name: "image", widget: "image" }
-      - { label: "Short Description", name: "description", widget: "text" }
-      - { label: "Body", name: "body", widget: "markdown" }
+ # - name: "shop"
+ #   label: "Products"
+  #  folder: "content/products"
+  #  create: true
+  #  slug: "{{slug}}"
+ #   extension: "md"
+ #   format: "frontmatter"
+ #   identifier_field: "title"
+  #  editor:
+  #    preview: false
+ #   fields:
+  #    - { label: "Title", name: "title", widget: "string" }
+   #   - { label: "Price", name: "price", widget: "string" }
+   #   - { label: "Image", name: "image", widget: "image" }
+  #    - { label: "Short Description", name: "description", widget: "text" }
+    #  - { label: "Body", name: "body", widget: "markdown" }
 
-publish_mode: editorial_workflow
+#publish_mode: editorial_workflow
