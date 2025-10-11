@@ -1,18 +1,18 @@
-<!doctype html>
+<!--<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>MEDZONE SUPPLIES — Quality Medical Supplies in Kenya</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css">-->
 
   <!-- Font Awesome CDN for icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!--  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
+<body> -->
 
   <!-- Header -->
-  <header class="site-header container header-inner">
+<!--  <header class="site-header container header-inner">
     <div class="brand">
       <img src="logo.jpeg" alt="Medzone logo" class="logo-thumb"/>
       <div>
@@ -23,10 +23,10 @@
     <nav class="main-nav">
       <a href="/">Home</a>
       <a href="/products">Products</a>
-    </nav>
+    </nav> -->
 
     <!-- Contact Box -->
-    <div class="contact-box">
+   <!-- <div class="contact-box">
       <a href="https://wa.me/254768675020" target="_blank" class="icon-btn whatsapp-btn">
         <i class="fab fa-whatsapp"></i>
       </a>
@@ -34,10 +34,10 @@
         <i class="fas fa-phone"></i>
       </a>
     </div>
-  </header>
+  </header> -->
 
   <!-- Hero Section -->
-  <section class="hero container hero-inner">
+<!--  <section class="hero container hero-inner">
     <div class="hero-text">
       <h2>Quality Medical<br/>Supplies</h2>
       <p>Explore our wide range of medical products at affordable prices.</p>
@@ -46,15 +46,15 @@
     <div class="hero-image">
       <img src="chair.webp" alt="Healthcare professional" />
     </div>
-  </section>
+  </section> -->
 
   <!-- Footer -->
-  <footer class="site-footer container">
+ <!-- <footer class="site-footer container">
     <p>&copy; 2025 MEDZONE SUPPLIES — Nairobi, Kenya. All rights reserved.</p>
-  </footer>
+  </footer> -->
 
   <!-- Inline CSS for Contact Box & Icon Buttons -->
-  <style>
+<!--  <style>
     /* Reduce body horizontal scroll */
     body { overflow-x: hidden; }
 
@@ -108,4 +108,79 @@
   </style>
 
 </body>
-</html>
+</html> -->
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MEDZONE SUPPLIES — Quality Medical Supplies in Kenya</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Font Awesome CDN for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header container header-inner" style="display:flex; justify-content:space-between; align-items:center; padding:10px 0;">
+    <div class="brand" style="display:flex; align-items:center; gap:10px;">
+      <img src="logo.jpeg" alt="Medzone logo" class="logo-thumb" style="width:60px; height:auto;"/>
+      <div>
+        <h1 class="brand-title" style="margin:0; font-size:24px;">MEDZONE<br/><span>SUPPLIES</span></h1>
+      </div>
+    </div>
+
+    <nav class="main-nav" style="display:flex; gap:15px; font-weight:500;">
+      <a href="/">Home</a>
+      <a href="/products">Products</a>
+    </nav>
+
+    <!-- Contact Box -->
+    <div class="contact-box" style="display:flex; gap:8px; padding:5px 8px; background-color:#f4f9f4; border-radius:8px; box-shadow:0 3px 8px rgba(0,0,0,0.15);">
+      <a href="https://wa.me/254768675020" target="_blank" class="icon-btn whatsapp-btn" style="display:flex; align-items:center; justify-content:center; width:45px; height:45px; border-radius:50%; background:#25D366; color:#fff; font-size:20px; text-decoration:none;"><i class="fab fa-whatsapp"></i></a>
+      <a href="tel:+254768675020" class="icon-btn call-btn" style="display:flex; align-items:center; justify-content:center; width:45px; height:45px; border-radius:50%; background:#0c4a6e; color:#fff; font-size:20px; text-decoration:none;"><i class="fas fa-phone"></i></a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero container hero-inner" style="display:flex; flex-wrap:wrap; gap:20px; align-items:center; margin-top:20px;">
+    <div class="hero-text" style="flex:1; min-width:250px;">
+      <h2 style="font-size:32px; color:#0c4a6e; margin-bottom:10px;">Quality Medical<br/>Supplies</h2>
+      <p style="font-size:16px; color:#444; margin-bottom:15px;">Explore our wide range of medical products at affordable prices.</p>
+      <a href="/products" class="btn" style="display:inline-block; padding:10px 20px; background:#1a73e8; color:#fff; border-radius:6px; text-decoration:none;">Shop Now</a>
+    </div>
+
+    <!-- Hero Slider Placeholder -->
+    <div id="hero-slider" style="flex:1; min-width:250px;"></div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer container" style="margin-top:50px; text-align:center; padding:15px 0; border-top:1px solid #ddd;">
+    <p>&copy; 2025 MEDZONE SUPPLIES — Nairobi, Kenya. All rights reserved.</p>
+  </footer>
+
+  <!-- Inline CSS for Slider & Products (minimal for demo) -->
+  <style>
+    body { overflow-x:hidden; font-family:Arial,sans-serif; margin:0; }
+    
+    /* Hero Slider */
+    .hero-container { display:flex; transition:transform 0.5s ease; position:relative; border-radius:12px; overflow:hidden; }
+    .hero-slide { flex:0 0 100%; position:relative; cursor:pointer; }
+    .hero-slide img { width:100%; height:auto; border-radius:12px; }
+    .hero-slide div { position:absolute; bottom:12px; left:12px; color:#fff; background:rgba(0,0,0,0.5); padding:8px; border-radius:6px; }
+    .hero-arrow { position:absolute; top:50%; transform:translateY(-50%); font-size:28px; color:#fff; background:rgba(0,0,0,0.3); border:none; width:40px; height:40px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:10; }
+    .hero-arrow.prev { left:10px; }
+    .hero-arrow.next { right:10px; }
+    .hero-dots { position:absolute; bottom:10px; left:50%; transform:translateX(-50%); display:flex; gap:6px; }
+    .hero-dots span { width:10px; height:10px; border-radius:50%; background:#fff; opacity:0.5; cursor:pointer; transition:0.2s; }
+    .hero-dots span.active { opacity:1; background:#25D366; }
+  </style>
+
+  <!-- Products JS (must be in same folder) -->
+  <script src="products.js" defer></script>
+
+</body>
+  </html>
+
