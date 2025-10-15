@@ -37,7 +37,7 @@ body{font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--text);margin:0;line
 .contact-form{display:grid;gap:12px;max-width:600px;margin:2rem auto}
 .contact-form label{display:block;font-weight:500}
 .contact-form input,.contact-form textarea{width:100%;padding:10px;border:1px solid #ccc;border-radius:6px}
-.site-footer{padding:2rem 0;text-align:center;color:#666;border-top:1px solid #e0e0e0}
+.site-footer{padding:1rem 0;text-align:center;color:#666;border-top:1px solid #e0e0e0}
 
 /* Responsive */
 @media(max-width:900px){
