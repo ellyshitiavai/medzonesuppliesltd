@@ -345,12 +345,11 @@ searchInput?.addEventListener("input",e=>{
   });
 });*/
 
-
 // Elements
 const productList = document.getElementById("product-list");
 const searchInput = document.getElementById("searchInput");
 
-// Show loader
+// Loader
 productList.innerHTML = `
   <div id="loader" style="text-align:center; padding:20px;">
     <div style="
@@ -369,68 +368,39 @@ productList.innerHTML = `
 // Spinner animation
 const style = document.createElement("style");
 style.innerHTML = `
-@keyframes spin {0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); }}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 `;
 document.head.appendChild(style);
 
-// GitHub repo info
-const repoOwner = "ellyshitiavai";
-const repoName = "medzonesuppliesltd";
-const folderPath = "content/products";
-
-// Base URL for your CMS uploads
-const baseURL = window.location.origin; // Adjust if CMS is hosted elsewhere
-
+// Load products from CMS
 async function loadProducts() {
   try {
-    const res = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderPath}`);
+    // Fetch the products JSON from your CMS
+    const res = await fetch('/admin/products.json'); // Adjust if your CMS provides a JSON endpoint
     if (!res.ok) throw new Error(`Failed to fetch products: ${res.status}`);
-    const files = await res.json();
-    if (!files.length) { productList.innerHTML = "<p>No products found.</p>"; return; }
+    const products = await res.json();
 
-    const products = [];
-
-    for (const file of files) {
-      if (file.name.endsWith(".md")) {
-        const raw = await fetch(file.download_url);
-        const text = await raw.text();
-
-        // Extract frontmatter
-        const match = text.match(/---([\s\S]*?)---/);
-        const data = {};
-        if (match) {
-          match[1].trim().split("\n").forEach(line => {
-            const [key, ...rest] = line.split(":");
-            if (key) data[key.trim()] = rest.join(":").trim().replace(/"/g, "");
-          });
-        }
-
-        // Handle gallery images (array)
-        if (data.images) {
-          try {
-            let imgs = JSON.parse(data.images.replace(/'/g,'"')); // convert quotes if needed
-            // Fix /uploads/ paths
-            imgs = imgs.map(src => src.startsWith("/uploads/") ? baseURL + src : src);
-            data.images = imgs;
-          } catch (err) {
-            console.warn("⚠️ Failed to parse images for", data.title);
-            data.images = [];
-          }
-        }
-
-        if (data.title) products.push(data);
-      }
+    if (!products.length) {
+      productList.innerHTML = "<p>No products found.</p>";
+      return;
     }
 
     document.getElementById("loader")?.remove();
 
     // Render products
     productList.innerHTML = products.map((p, index) => {
+      // Handle gallery images
       const images = p.images || [];
-      const imageGallery = images.length 
-        ? `<div class="carousel" id="carousel-${index}" style="display:flex; overflow-x:auto; gap:10px;">${images.map(src => `<img src="${src}" alt="${p.title}" style="height:150px; border-radius:8px;">`).join('')}</div>` 
+      const imageGallery = images.length
+        ? `<div class="carousel" id="carousel-${index}" style="display:flex; overflow-x:auto; gap:10px;">
+            ${images.map(src => `<img src="${src.startsWith('/uploads/') ? src : '/uploads/' + src}" alt="${p.title}" style="height:150px; border-radius:8px;">`).join('')}
+          </div>`
         : `<img src="placeholder.png" alt="${p.title}" style="width:100%; border-radius:10px;">`;
 
+      // WhatsApp link
       const productLink = `${window.location.origin}/products#${encodeURIComponent(p.title)}`;
       const waMessage = `Hi, I'm interested in your MEDZONE SUPPLIES AD: ${productLink} (${p.title} - ${p.price||""})`;
       const waLink = `https://wa.me/254768675020?text=${encodeURIComponent(waMessage)}`;
@@ -439,8 +409,8 @@ async function loadProducts() {
         <div class="product-card" data-index="${index}" style="border:1px solid #ccc; padding:10px; border-radius:8px; text-align:center;">
           ${imageGallery}
           <h4>${p.title}</h4>
-          <p>${p.description||""}</p>
-          <strong>${p.price||""}</strong>
+          <p>${p.description || ''}</p>
+          <strong>${p.price || ''}</strong>
           <div style="margin-top:10px; display:flex; justify-content:center; gap:10px;">
             <a href="${waLink}" target="_blank" style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background:#25D366; color:#fff; text-decoration:none; font-size:20px;">
               <i class="fab fa-whatsapp"></i>
@@ -453,8 +423,7 @@ async function loadProducts() {
       `;
     }).join('');
 
-    console.log("🎉 Products loaded successfully with gallery");
-
+    console.log("🎉 Products loaded successfully");
   } catch (err) {
     console.error("💥 Error loading products:", err);
     productList.innerHTML = "<p>Failed to load products.</p>";
@@ -473,6 +442,16 @@ searchInput?.addEventListener("input", (e) => {
 // Start loading products
 loadProducts();
 
+
+    
+
+
+    
+          
+       
+ 
+         
+   
 
 
       
