@@ -19,7 +19,7 @@ body{font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--text);margin:0;line
 .hero{background:var(--muted);padding:3rem 0;border-bottom:1px solid #60cd74 rgb(235, 247, 240)}
 .hero-inner{display:flex;gap:2rem;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .hero-text{flex:1;min-width:280px}
-.hero-text h2{font-size:3rem;margin:0 0 1rem;color:var(--secondary)}
+.hero-text h2{font-size:2rem;margin:0 0 1rem;color:var(--secondary)}
 .hero-text p{font-size:1.2rem;color:#333}
 .btn{display:inline-block;background:var(--primary);color:#fff;padding:12px 22px;border-radius:6px;text-decoration:none;margin-top:10px;transition:0.2s}
 .btn:hover{background:#1558b0}
