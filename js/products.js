@@ -1,4 +1,4 @@
-// Elements
+/*// Elements
 const productList = document.getElementById("product-list");
 const searchInput = document.getElementById("searchInput");
 
@@ -122,7 +122,7 @@ searchInput?.addEventListener("input", (e) => {
 });
 
 // Start loading products
-loadProducts();
+loadProducts();*/
 
 /*// 🌟 MEDZONE SUPPLIES - Unified Script
 alert("Products.js is running!");
@@ -344,4 +344,111 @@ searchInput?.addEventListener("input",e=>{
     card.style.display = card.textContent.toLowerCase().includes(query)?"block":"none";
   });
 });*/
+
+// products.js — Gallery with Auto-Slide
+const productList = document.getElementById("product-list");
+const searchInput = document.getElementById("searchInput");
+
+async function loadProducts() {
+  try {
+    const response = await fetch("/content/products/products.json");
+    const products = await response.json();
+    renderProducts(products);
+  } catch (err) {
+    console.error("Failed to load products:", err);
+    productList.innerHTML = `<p style="text-align:center;color:#888;">⚠️ Failed to load products. Please try again later.</p>`;
+  }
+}
+
+function renderProducts(products) {
+  productList.innerHTML = "";
+
+  if (!products.length) {
+    productList.innerHTML = `<p style="text-align:center;color:#666;">No products found.</p>`;
+    return;
+  }
+
+  products.forEach((p) => {
+    const item = document.createElement("div");
+    item.className = "product-card";
+
+    const images = p.images || [];
+    let carouselHTML = "";
+
+    if (images.length > 1) {
+      carouselHTML = `
+        <div class="carousel">
+          <button class="prev-btn">&#10094;</button>
+          <div class="carousel-images">
+            ${images.map((img, i) => `<img src="${img}" alt="${p.title}" class="${i === 0 ? "active" : ""}">`).join("")}
+          </div>
+          <button class="next-btn">&#10095;</button>
+        </div>
+      `;
+    } else {
+      carouselHTML = `<img src="${images[0] || 'placeholder.jpg'}" alt="${p.title}" class="single-img">`;
+    }
+
+    item.innerHTML = `
+      ${carouselHTML}
+      <h4>${p.title}</h4>
+      <p class="price">KES ${p.price || "N/A"}</p>
+      <p class="desc">${p.description || ""}</p>
+    `;
+
+    productList.appendChild(item);
+  });
+
+  enableCarousels();
+}
+
+function enableCarousels() {
+  const carousels = document.querySelectorAll(".carousel");
+
+  carousels.forEach((carousel) => {
+    const imgs = carousel.querySelectorAll("img");
+    let current = 0;
+    let interval;
+
+    const showImage = (index) => {
+      imgs.forEach((img, i) => img.classList.toggle("active", i === index));
+    };
+
+    const next = () => {
+      current = (current + 1) % imgs.length;
+      showImage(current);
+    };
+
+    const prev = () => {
+      current = (current - 1 + imgs.length) % imgs.length;
+      showImage(current);
+    };
+
+    // Buttons
+    carousel.querySelector(".next-btn").addEventListener("click", next);
+    carousel.querySelector(".prev-btn").addEventListener("click", prev);
+
+    // Auto-slide
+    const startAutoSlide = () => interval = setInterval(next, 4000);
+    const stopAutoSlide = () => clearInterval(interval);
+
+    startAutoSlide();
+    carousel.addEventListener("mouseenter", stopAutoSlide);
+    carousel.addEventListener("mouseleave", startAutoSlide);
+  });
+}
+
+// Live Search
+searchInput.addEventListener("input", async (e) => {
+  const query = e.target.value.toLowerCase();
+  const response = await fetch("/content/products/products.json");
+  const products = await response.json();
+  const filtered = products.filter((p) =>
+    p.title.toLowerCase().includes(query)
+  );
+  renderProducts(filtered);
+});
+
+loadProducts();
+
   
