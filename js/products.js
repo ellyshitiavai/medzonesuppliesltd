@@ -345,6 +345,7 @@ searchInput?.addEventListener("input",e=>{
   });
 });*/
 
+
 // Elements
 const productList = document.getElementById("product-list");
 const searchInput = document.getElementById("searchInput");
@@ -369,74 +370,66 @@ productList.innerHTML = `
 const style = document.createElement("style");
 style.innerHTML = `
 @keyframes spin {0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); }}
-.carousel { display: flex; overflow-x: auto; gap: 5px; scroll-behavior: smooth; }
-.carousel img { max-width: 100%; border-radius: 8px; height: 200px; object-fit: cover; flex-shrink: 0; }
-.product-buttons { margin-top:10px; display:flex; justify-content:center; gap:10px; }
-.product-buttons a { display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; color:#fff; text-decoration:none; font-size:20px; }
-.product-buttons a.whatsapp { background:#25D366; }
-.product-buttons a.call { background:#0c4a6e; }
 `;
 document.head.appendChild(style);
 
-// GitHub info
+// GitHub repo info
 const repoOwner = "ellyshitiavai";
 const repoName = "medzonesuppliesltd";
 const folderPath = "content/products";
 
-// Load products
+// Base URL for your CMS uploads
+const baseURL = window.location.origin; // Adjust if CMS is hosted elsewhere
+
 async function loadProducts() {
   try {
     const res = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderPath}`);
-    if(!res.ok) throw new Error(`Failed to fetch products: ${res.status}`);
+    if (!res.ok) throw new Error(`Failed to fetch products: ${res.status}`);
     const files = await res.json();
-    if(!files.length){ productList.innerHTML="<p>No products found.</p>"; return; }
+    if (!files.length) { productList.innerHTML = "<p>No products found.</p>"; return; }
 
     const products = [];
 
-    for(const file of files){
-      if(file.name.endsWith(".md")){
+    for (const file of files) {
+      if (file.name.endsWith(".md")) {
         const raw = await fetch(file.download_url);
         const text = await raw.text();
+
+        // Extract frontmatter
         const match = text.match(/---([\s\S]*?)---/);
         const data = {};
-        if(match){
-          match[1].trim().split("\n").forEach(line=>{
-            const [key,...rest] = line.split(":");
-            if(key) data[key.trim()] = rest.join(":").trim().replace(/"/g,"");
+        if (match) {
+          match[1].trim().split("\n").forEach(line => {
+            const [key, ...rest] = line.split(":");
+            if (key) data[key.trim()] = rest.join(":").trim().replace(/"/g, "");
           });
         }
 
-        // Handle images (YAML array)
-        if(data.images){
-          data.images = data.images
-            .split("\n")
-            .map(l=>l.trim())
-            .filter(l=>l.startsWith("-"))
-            .map(l=>l.replace(/^- /,"").trim());
-        } else if(data.image){
-          data.images = [data.image];
-        } else {
-          data.images = [];
+        // Handle gallery images (array)
+        if (data.images) {
+          try {
+            let imgs = JSON.parse(data.images.replace(/'/g,'"')); // convert quotes if needed
+            // Fix /uploads/ paths
+            imgs = imgs.map(src => src.startsWith("/uploads/") ? baseURL + src : src);
+            data.images = imgs;
+          } catch (err) {
+            console.warn("⚠️ Failed to parse images for", data.title);
+            data.images = [];
+          }
         }
 
-        // Convert to raw GitHub URLs
-        data.images = data.images.map(img => img.startsWith("http") 
-          ? img 
-          : `https://raw.githubusercontent.com/${repoOwner}/${repoName}/main/${folderPath}/${img}`);
-
-        if(data.title) products.push(data);
+        if (data.title) products.push(data);
       }
     }
 
     document.getElementById("loader")?.remove();
 
-    if(!products.length){ productList.innerHTML="<p>No valid products found.</p>"; return; }
-
     // Render products
-    productList.innerHTML = products.map((p,index)=>{
-      const gallery = p.images.length
-        ? `<div class="carousel">${p.images.map(img=>`<img src="${img}" alt="${p.title}">`).join("")}</div>`
-        : `<img src="placeholder.png" alt="${p.title}" style="width:100%; border-radius:8px;">`;
+    productList.innerHTML = products.map((p, index) => {
+      const images = p.images || [];
+      const imageGallery = images.length 
+        ? `<div class="carousel" id="carousel-${index}" style="display:flex; overflow-x:auto; gap:10px;">${images.map(src => `<img src="${src}" alt="${p.title}" style="height:150px; border-radius:8px;">`).join('')}</div>` 
+        : `<img src="placeholder.png" alt="${p.title}" style="width:100%; border-radius:10px;">`;
 
       const productLink = `${window.location.origin}/products#${encodeURIComponent(p.title)}`;
       const waMessage = `Hi, I'm interested in your MEDZONE SUPPLIES AD: ${productLink} (${p.title} - ${p.price||""})`;
@@ -444,35 +437,42 @@ async function loadProducts() {
 
       return `
         <div class="product-card" data-index="${index}" style="border:1px solid #ccc; padding:10px; border-radius:8px; text-align:center;">
-          ${gallery}
+          ${imageGallery}
           <h4>${p.title}</h4>
           <p>${p.description||""}</p>
           <strong>${p.price||""}</strong>
-          <div class="product-buttons">
-            <a href="${waLink}" target="_blank" class="whatsapp"><i class="fab fa-whatsapp"></i></a>
-            <a href="tel:+254768675020" class="call"><i class="fas fa-phone"></i></a>
+          <div style="margin-top:10px; display:flex; justify-content:center; gap:10px;">
+            <a href="${waLink}" target="_blank" style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background:#25D366; color:#fff; text-decoration:none; font-size:20px;">
+              <i class="fab fa-whatsapp"></i>
+            </a>
+            <a href="tel:+254768675020" style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background:#0c4a6e; color:#fff; text-decoration:none; font-size:20px;">
+              <i class="fas fa-phone"></i>
+            </a>
           </div>
         </div>
       `;
-    }).join("");
+    }).join('');
 
-    console.log("🎉 Products loaded successfully");
+    console.log("🎉 Products loaded successfully with gallery");
 
-  } catch(err){
+  } catch (err) {
     console.error("💥 Error loading products:", err);
-    productList.innerHTML="<p>Failed to load products.</p>";
+    productList.innerHTML = "<p>Failed to load products.</p>";
   }
 }
 
-// Search filter
-searchInput?.addEventListener("input", e=>{
+// Search functionality
+searchInput?.addEventListener("input", (e) => {
   const query = e.target.value.toLowerCase();
-  document.querySelectorAll(".product-card").forEach(card=>{
-    card.style.display = card.textContent.toLowerCase().includes(query)?"block":"none";
+  document.querySelectorAll(".product-card").forEach(card => {
+    const match = card.textContent.toLowerCase().includes(query);
+    card.style.display = match ? "block" : "none";
   });
 });
 
+// Start loading products
 loadProducts();
+
 
 
       
