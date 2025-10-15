@@ -349,7 +349,7 @@ searchInput?.addEventListener("input",e=>{
 const productList = document.getElementById("product-list");
 const searchInput = document.getElementById("searchInput");
 
-// Spinner loader
+// Show loader
 productList.innerHTML = `
   <div id="loader" style="text-align:center; padding:20px;">
     <div style="
@@ -369,11 +369,12 @@ productList.innerHTML = `
 const style = document.createElement("style");
 style.innerHTML = `
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-.carousel { position: relative; overflow: hidden; border-radius:10px; }
-.carousel img { width: 100%; display: none; border-radius:10px; }
-.carousel img.active { display: block; }
-.carousel-controls { display:flex; justify-content:space-between; position:absolute; top:50%; width:100%; transform:translateY(-50%); padding:0 5px; box-sizing:border-box; }
-.carousel-controls span { background:#25D366; color:#fff; padding:5px 10px; border-radius:50%; cursor:pointer; user-select:none; }
+.carousel img { width: 100%; border-radius: 8px; }
+.product-card { border: 1px solid #ccc; border-radius: 8px; padding: 10px; text-align:center; }
+.product-buttons { margin-top:10px; display:flex; justify-content:center; gap:10px; }
+.product-buttons a { display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; color:#fff; text-decoration:none; font-size:20px; }
+.product-buttons .whatsapp { background:#25D366; }
+.product-buttons .call { background:#0c4a6e; }
 `;
 document.head.appendChild(style);
 
@@ -382,14 +383,15 @@ const repoOwner = "ellyshitiavai";
 const repoName = "medzonesuppliesltd";
 const folderPath = "content/products";
 
-// Load products from GitHub
+// Load products
 async function loadProducts() {
   try {
     const res = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderPath}`);
     if (!res.ok) throw new Error(`Failed to fetch products: ${res.status}`);
     const files = await res.json();
+
     if (!files.length) {
-      productList.innerHTML = "<p>No products found.</p>";
+      productList.innerHTML = "<p>No products found in CMS folder.</p>";
       return;
     }
 
@@ -399,74 +401,53 @@ async function loadProducts() {
       if (file.name.endsWith(".md")) {
         const raw = await fetch(file.download_url);
         const text = await raw.text();
-
-        // Extract frontmatter
         const match = text.match(/---([\s\S]*?)---/);
         const data = {};
         if (match) {
           match[1].trim().split("\n").forEach(line => {
             const [key, ...rest] = line.split(":");
-            if (key) {
-              let value = rest.join(":").trim().replace(/"/g, "");
-              // Handle array values
-              if (value.startsWith("-")) {
-                const arr = match[1].trim().split("\n").filter(l => l.startsWith("-")).map(l => l.replace(/^-/, "").trim());
-                data[key.trim()] = arr;
-              } else data[key.trim()] = value;
-            }
+            if (key) data[key.trim()] = rest.join(":").trim().replace(/"/g, "");
           });
         }
+
+        // Handle images array
+        data.images = data.images ? JSON.parse(data.images) : [];
+        if (data.image && !data.images.length) data.images.push(data.image);
+        data.images = data.images.map(img => img.startsWith("http") ? img : `https://raw.githubusercontent.com/${repoOwner}/${repoName}/main/${folderPath}/${img}`);
+
         if (data.title) products.push(data);
       }
     }
 
-    // Remove loader
     document.getElementById("loader")?.remove();
+
+    if (!products.length) {
+      productList.innerHTML = "<p>No valid products found.</p>";
+      return;
+    }
 
     // Render products
     productList.innerHTML = products.map((p, index) => {
-      const images = p.images && p.images.length ? p.images : ["placeholder.png"];
-      const carouselImages = images.map((img, i) => `<img src="${img}" alt="${p.title}" class="${i===0?'active':''}">`).join("");
+      const imageGallery = `<div class="carousel" id="carousel-${index}">${p.images.map(src => `<img src="${src}" alt="${p.title}">`).join('')}</div>`;
       const productLink = `${window.location.origin}/products#${encodeURIComponent(p.title)}`;
       const waMessage = `Hi, I'm interested in your MEDZONE SUPPLIES AD: ${productLink} (${p.title} - ${p.price||""})`;
       const waLink = `https://wa.me/254768675020?text=${encodeURIComponent(waMessage)}`;
 
       return `
-        <div class="product-card" data-index="${index}" style="border:1px solid #ccc; padding:10px; border-radius:8px; text-align:center;">
-          <div class="carousel" id="carousel-${index}">
-            ${carouselImages}
-            <div class="carousel-controls">
-              <span class="prev">&#10094;</span>
-              <span class="next">&#10095;</span>
-            </div>
-          </div>
+        <div class="product-card" data-index="${index}">
+          ${imageGallery}
           <h4>${p.title}</h4>
           <p>${p.description||""}</p>
           <strong>${p.price||""}</strong>
-          <div style="margin-top:10px; display:flex; justify-content:center; gap:10px;">
-            <a href="${waLink}" target="_blank" style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background:#25D366; color:#fff; text-decoration:none; font-size:20px;">
-              <i class="fab fa-whatsapp"></i>
-            </a>
-            <a href="tel:+254768675020" style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background:#0c4a6e; color:#fff; text-decoration:none; font-size:20px;">
-              <i class="fas fa-phone"></i>
-            </a>
+          <div class="product-buttons">
+            <a href="${waLink}" target="_blank" class="whatsapp"><i class="fab fa-whatsapp"></i></a>
+            <a href="tel:+254768675020" class="call"><i class="fas fa-phone"></i></a>
           </div>
         </div>
       `;
-    }).join("");
+    }).join('');
 
-    // Initialize carousel
-    products.forEach((_, index) => {
-      const carousel = document.getElementById(`carousel-${index}`);
-      if (!carousel) return;
-      const imgs = carousel.querySelectorAll("img");
-      let current = 0;
-      const show = i => imgs.forEach((img, idx) => img.classList.toggle("active", idx === i));
-      carousel.querySelector(".prev").addEventListener("click", () => { current = (current-1+imgs.length)%imgs.length; show(current); });
-      carousel.querySelector(".next").addEventListener("click", () => { current = (current+1)%imgs.length; show(current); });
-    });
-
-    console.log("🎉 Products loaded with gallery successfully!");
+    console.log("🎉 Products loaded successfully");
 
   } catch (err) {
     console.error("💥 Error loading products:", err);
@@ -474,14 +455,14 @@ async function loadProducts() {
   }
 }
 
-// Search filter
+// Search functionality
 searchInput?.addEventListener("input", e => {
   const query = e.target.value.toLowerCase();
   document.querySelectorAll(".product-card").forEach(card => {
-    card.style.display = card.textContent.toLowerCase().includes(query) ? "block" : "none";
+    const match = card.textContent.toLowerCase().includes(query);
+    card.style.display = match ? "block" : "none";
   });
 });
 
-// Start
+// Start loading
 loadProducts();
-
