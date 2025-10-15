@@ -87,4 +87,47 @@ body{font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--text);margin:0;line
   font-weight: bold;
   color: #2E7D32;
        }
+/* Product Carousel (Auto-Slide) */
+.carousel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #f9f9f9;
+}
+
+.carousel-images {
+  display: flex;
+  transition: transform 0.3s ease;
+}
+
+.carousel img {
+  min-width: 100%;
+  display: none;
+  border-radius: 10px;
+}
+
+.carousel img.active {
+  display: block;
+}
+
+.prev-btn, .next-btn {
+  position: absolute;
+  top: 45%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  font-size: 20px;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 50%;
+  z-index: 10;
+}
+
+.prev-btn { left: 10px; }
+.next-btn { right: 10px; }
+
+.prev-btn:hover, .next-btn:hover {
+  background: rgba(0,0,0,0.8);
+}
   
