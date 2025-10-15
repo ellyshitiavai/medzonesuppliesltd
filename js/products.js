@@ -345,110 +345,143 @@ searchInput?.addEventListener("input",e=>{
   });
 });*/
 
-// products.js — Gallery with Auto-Slide
+// Elements
 const productList = document.getElementById("product-list");
 const searchInput = document.getElementById("searchInput");
 
+// Spinner loader
+productList.innerHTML = `
+  <div id="loader" style="text-align:center; padding:20px;">
+    <div style="
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #25D366;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin:auto;
+    "></div>
+    <p style="font-size:14px; color:#555; margin-top:8px;">Loading products...</p>
+  </div>
+`;
+
+// Spinner animation
+const style = document.createElement("style");
+style.innerHTML = `
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.carousel { position: relative; overflow: hidden; border-radius:10px; }
+.carousel img { width: 100%; display: none; border-radius:10px; }
+.carousel img.active { display: block; }
+.carousel-controls { display:flex; justify-content:space-between; position:absolute; top:50%; width:100%; transform:translateY(-50%); padding:0 5px; box-sizing:border-box; }
+.carousel-controls span { background:#25D366; color:#fff; padding:5px 10px; border-radius:50%; cursor:pointer; user-select:none; }
+`;
+document.head.appendChild(style);
+
+// GitHub repo info
+const repoOwner = "ellyshitiavai";
+const repoName = "medzonesuppliesltd";
+const folderPath = "content/products";
+
+// Load products from GitHub
 async function loadProducts() {
   try {
-    const response = await fetch("/content/products/products.json");
-    const products = await response.json();
-    renderProducts(products);
-  } catch (err) {
-    console.error("Failed to load products:", err);
-    productList.innerHTML = `<p style="text-align:center;color:#888;">⚠️ Failed to load products. Please try again later.</p>`;
-  }
-}
-
-function renderProducts(products) {
-  productList.innerHTML = "";
-
-  if (!products.length) {
-    productList.innerHTML = `<p style="text-align:center;color:#666;">No products found.</p>`;
-    return;
-  }
-
-  products.forEach((p) => {
-    const item = document.createElement("div");
-    item.className = "product-card";
-
-    const images = p.images || [];
-    let carouselHTML = "";
-
-    if (images.length > 1) {
-      carouselHTML = `
-        <div class="carousel">
-          <button class="prev-btn">&#10094;</button>
-          <div class="carousel-images">
-            ${images.map((img, i) => `<img src="${img}" alt="${p.title}" class="${i === 0 ? "active" : ""}">`).join("")}
-          </div>
-          <button class="next-btn">&#10095;</button>
-        </div>
-      `;
-    } else {
-      carouselHTML = `<img src="${images[0] || 'placeholder.jpg'}" alt="${p.title}" class="single-img">`;
+    const res = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderPath}`);
+    if (!res.ok) throw new Error(`Failed to fetch products: ${res.status}`);
+    const files = await res.json();
+    if (!files.length) {
+      productList.innerHTML = "<p>No products found.</p>";
+      return;
     }
 
-    item.innerHTML = `
-      ${carouselHTML}
-      <h4>${p.title}</h4>
-      <p class="price">KES ${p.price || "N/A"}</p>
-      <p class="desc">${p.description || ""}</p>
-    `;
+    const products = [];
 
-    productList.appendChild(item);
-  });
+    for (const file of files) {
+      if (file.name.endsWith(".md")) {
+        const raw = await fetch(file.download_url);
+        const text = await raw.text();
 
-  enableCarousels();
+        // Extract frontmatter
+        const match = text.match(/---([\s\S]*?)---/);
+        const data = {};
+        if (match) {
+          match[1].trim().split("\n").forEach(line => {
+            const [key, ...rest] = line.split(":");
+            if (key) {
+              let value = rest.join(":").trim().replace(/"/g, "");
+              // Handle array values
+              if (value.startsWith("-")) {
+                const arr = match[1].trim().split("\n").filter(l => l.startsWith("-")).map(l => l.replace(/^-/, "").trim());
+                data[key.trim()] = arr;
+              } else data[key.trim()] = value;
+            }
+          });
+        }
+        if (data.title) products.push(data);
+      }
+    }
+
+    // Remove loader
+    document.getElementById("loader")?.remove();
+
+    // Render products
+    productList.innerHTML = products.map((p, index) => {
+      const images = p.images && p.images.length ? p.images : ["placeholder.png"];
+      const carouselImages = images.map((img, i) => `<img src="${img}" alt="${p.title}" class="${i===0?'active':''}">`).join("");
+      const productLink = `${window.location.origin}/products#${encodeURIComponent(p.title)}`;
+      const waMessage = `Hi, I'm interested in your MEDZONE SUPPLIES AD: ${productLink} (${p.title} - ${p.price||""})`;
+      const waLink = `https://wa.me/254768675020?text=${encodeURIComponent(waMessage)}`;
+
+      return `
+        <div class="product-card" data-index="${index}" style="border:1px solid #ccc; padding:10px; border-radius:8px; text-align:center;">
+          <div class="carousel" id="carousel-${index}">
+            ${carouselImages}
+            <div class="carousel-controls">
+              <span class="prev">&#10094;</span>
+              <span class="next">&#10095;</span>
+            </div>
+          </div>
+          <h4>${p.title}</h4>
+          <p>${p.description||""}</p>
+          <strong>${p.price||""}</strong>
+          <div style="margin-top:10px; display:flex; justify-content:center; gap:10px;">
+            <a href="${waLink}" target="_blank" style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background:#25D366; color:#fff; text-decoration:none; font-size:20px;">
+              <i class="fab fa-whatsapp"></i>
+            </a>
+            <a href="tel:+254768675020" style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background:#0c4a6e; color:#fff; text-decoration:none; font-size:20px;">
+              <i class="fas fa-phone"></i>
+            </a>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    // Initialize carousel
+    products.forEach((_, index) => {
+      const carousel = document.getElementById(`carousel-${index}`);
+      if (!carousel) return;
+      const imgs = carousel.querySelectorAll("img");
+      let current = 0;
+      const show = i => imgs.forEach((img, idx) => img.classList.toggle("active", idx === i));
+      carousel.querySelector(".prev").addEventListener("click", () => { current = (current-1+imgs.length)%imgs.length; show(current); });
+      carousel.querySelector(".next").addEventListener("click", () => { current = (current+1)%imgs.length; show(current); });
+    });
+
+    console.log("🎉 Products loaded with gallery successfully!");
+
+  } catch (err) {
+    console.error("💥 Error loading products:", err);
+    productList.innerHTML = "<p>Failed to load products.</p>";
+  }
 }
 
-function enableCarousels() {
-  const carousels = document.querySelectorAll(".carousel");
-
-  carousels.forEach((carousel) => {
-    const imgs = carousel.querySelectorAll("img");
-    let current = 0;
-    let interval;
-
-    const showImage = (index) => {
-      imgs.forEach((img, i) => img.classList.toggle("active", i === index));
-    };
-
-    const next = () => {
-      current = (current + 1) % imgs.length;
-      showImage(current);
-    };
-
-    const prev = () => {
-      current = (current - 1 + imgs.length) % imgs.length;
-      showImage(current);
-    };
-
-    // Buttons
-    carousel.querySelector(".next-btn").addEventListener("click", next);
-    carousel.querySelector(".prev-btn").addEventListener("click", prev);
-
-    // Auto-slide
-    const startAutoSlide = () => interval = setInterval(next, 4000);
-    const stopAutoSlide = () => clearInterval(interval);
-
-    startAutoSlide();
-    carousel.addEventListener("mouseenter", stopAutoSlide);
-    carousel.addEventListener("mouseleave", startAutoSlide);
-  });
-}
-
-// Live Search
-searchInput.addEventListener("input", async (e) => {
+// Search filter
+searchInput?.addEventListener("input", e => {
   const query = e.target.value.toLowerCase();
-  const response = await fetch("/content/products/products.json");
-  const products = await response.json();
-  const filtered = products.filter((p) =>
-    p.title.toLowerCase().includes(query)
-  );
-  renderProducts(filtered);
+  document.querySelectorAll(".product-card").forEach(card => {
+    card.style.display = card.textContent.toLowerCase().includes(query) ? "block" : "none";
+  });
 });
 
+// Start
 loadProducts();
 
-  
